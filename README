@@ -33,7 +33,7 @@ Installation
 
 Compile ainod using:
 
+./autogen.sh
 ./configure
 make
 sudo make install
-
