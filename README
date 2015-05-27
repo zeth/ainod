@@ -1,0 +1,39 @@
+Ainod - JSON Storage and Retrieval Daemon
+=========================================
+
+Ainod is a daemon (background service) that accepts JSON objects and
+stores and retrieves them for you.
+
+You could describe ainod as a NoSQL database or a document database
+but ainod uses plain text JSON files as the primary storage format
+rather than a proprietary binary data format.
+
+
+Depepencies
+-----------
+
+Ainod is written in C and targets Linux.
+
+To compile the binary, you need the development headers for json-c and
+systemd. On Debian, Ubuntu and similar .deb based distributions, you
+can use this command:
+
+sudo apt-get install libjson-c-dev libsystemd-dev
+
+On Fedora or similar .rpm based distributions, you can use:
+
+dnf install json-c-devel systemd-devel
+
+or if you are old school:
+
+yum install json-c-devel systemd-devel
+
+Installation
+------------
+
+Compile ainod using:
+
+./configure
+make
+sudo make install
+
