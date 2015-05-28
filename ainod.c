@@ -22,12 +22,14 @@
 #include <stdio.h>
 #include <search.h>
 #include "configparser.h"
+#include "asocket.h"
 
 int parent(void) {
   struct hsearch_data *store = new_store();
   parse_config(store, "ainod.conf");
   search_store(store, "Workers");
   search_store(store, "Datadir");
+  int incoming = get_socket();
   delete_store(store);
 }
 
