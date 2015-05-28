@@ -25,11 +25,16 @@
 #include "asocket.h"
 
 int parent(void) {
+  /* Make a Hash Table for config information. */
   struct hsearch_data *store = new_store();
+  /* Fill it from the config manager */
   parse_config(store, "ainod.conf");
   search_store(store, "Workers");
   search_store(store, "Datadir");
+  /* Get an incoming socket */
   int incoming = get_socket();
+
+  /* Bin the config information */
   delete_store(store);
 }
 

@@ -3,6 +3,7 @@
 
 AC_PREREQ([2.69])
 AC_INIT([ainod], [0.1], [theology@gmail.com])
+: ${CFLAGS=-Werror -O3}
 AC_CONFIG_SRCDIR([hfunctions.h])
 AC_CONFIG_HEADERS([config.h])
 
@@ -12,7 +13,6 @@ AC_PROG_CC_C99
 AC_PROG_INSTALL
 
 AM_INIT_AUTOMAKE([-Wall -Werror])
-
 # Checks for libraries.
 AC_CHECK_LIB([systemd], [sd_listen_fds])
 
