@@ -14,6 +14,7 @@ AC_PROG_INSTALL
 
 AM_INIT_AUTOMAKE([-Wall -Werror])
 # Checks for libraries.
+AC_CHECK_LIB(pthread, pthread_attr_init)
 AC_CHECK_LIB([systemd], [sd_listen_fds])
 
 # Checks for header files.

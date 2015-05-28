@@ -21,21 +21,39 @@
 
 #include <stdio.h>
 #include <search.h>
+#include <pthread.h>
 #include "configparser.h"
 #include "asocket.h"
+#include "handleerror.h"
 
 int parent(void) {
   /* Make a Hash Table for config information. */
   struct hsearch_data *store = new_store();
+
   /* Fill it from the config manager */
   parse_config(store, "ainod.conf");
   search_store(store, "Workers");
   search_store(store, "Datadir");
-  /* Get an incoming socket */
+
+  /* Get the incoming socket */
   int incoming = get_socket();
+
+  /* Get a mutex for it */
+  pthread_mutex_t mp;
+  pthread_mutexattr_t attr;
+  int i = pthread_mutexattr_init(&attr);
+  int j = pthread_mutexattr_setpshared (&attr, PTHREAD_PROCESS_SHARED);
+  int k = pthread_mutexattr_setrobust(&attr, PTHREAD_MUTEX_ROBUST);
+  int l = pthread_mutex_init(&mp, &attr);
+  if (!((i == 0) && (j == 0) && (k == 0) && (l == 0))) {
+    handle_error("Error making mutex.");
+  }
 
   /* Bin the config information */
   delete_store(store);
+  
+  /* Bin the mutex */
+  pthread_mutex_destroy (&mp);
 }
 
 
