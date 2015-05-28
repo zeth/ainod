@@ -17,22 +17,25 @@
   along with ainod; If not, see <http://www.gnu.org/licenses/>.
 ***/
 
-#define _GNU_SOURCE
+#ifndef CONFIG_PARSER_H_   /* Include guard */
+#define CONFIG_PARSER_H_
 
-#include <stdio.h>
 #include <search.h>
-#include "configparser.h"
 
-int parent(void) {
-  struct hsearch_data *store = new_store();
-  parse_config(store, "ainod.conf");
-  search_store(store, "Workers");
-  search_store(store, "Datadir");
-  delete_store(store);
-}
+#define CONFIG_STORE_MAX 20
 
+#define NEWLINE    "\n\r"
+#define WHITESPACE " \t\n\r"
+#define COMMENTS   "#;"
 
-int main(){
-  parent();
-  printf("Hello World.\n");
-}
+struct hsearch_data *new_store(void);
+
+int delete_store(struct hsearch_data *store);
+
+int parse_config(struct hsearch_data *store,
+                 const char *filename);
+
+int search_store(struct hsearch_data *store,
+                 char *key);
+
+#endif // CONFIG_PARSER_H_

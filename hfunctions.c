@@ -19,20 +19,48 @@
 
 #define _GNU_SOURCE
 
-#include <stdio.h>
 #include <search.h>
-#include "configparser.h"
+#include "hfunctions.h"
 
-int parent(void) {
-  struct hsearch_data *store = new_store();
-  parse_config(store, "ainod.conf");
-  search_store(store, "Workers");
-  search_store(store, "Datadir");
-  delete_store(store);
+typedef struct _ENTRY
+{
+  unsigned int used;
+  ENTRY entry;
+}
+  _ENTRY;
+
+int hiter_data_r(struct hsearch_data *htab, data_handler cmb) {
+  int length = htab->size;
+  struct _ENTRY *j;
+  j = htab->table;
+  int i;
+  for (i = 0; i < length; ++i) {
+    struct _ENTRY k;
+    k = j[i];
+    if (k.used) {
+      ENTRY l;
+      l = k.entry;
+      cmb(l.data);
+    }
+  }
+  return 0;
 }
 
-
-int main(){
-  parent();
-  printf("Hello World.\n");
+int hiter_items_r(struct hsearch_data *htab, entry_handler cmb) {
+  int length = htab->size;
+  struct _ENTRY *j;
+  j = htab->table;
+  int i;
+  for (i = 0; i < length; ++i) {
+    struct _ENTRY k;
+    k = j[i];
+    if (k.used) {
+      ENTRY l;
+      l = k.entry;
+      ENTRY *k;
+      k = &l;
+      cmb(k);
+    }
+  }
+  return 0;
 }

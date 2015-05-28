@@ -8,7 +8,6 @@ You could describe ainod as a NoSQL database or a document database
 but ainod uses plain text JSON files as the primary storage format
 rather than a proprietary binary data format.
 
-
 Depepencies
 -----------
 

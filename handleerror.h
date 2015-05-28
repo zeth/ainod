@@ -17,22 +17,11 @@
   along with ainod; If not, see <http://www.gnu.org/licenses/>.
 ***/
 
-#define _GNU_SOURCE
+#ifndef HANDLE_ERROR_H_   /* Include guard */
+#define HANDLE_ERROR_H_
 
-#include <stdio.h>
-#include <search.h>
-#include "configparser.h"
+int handle_error(char *message, ...);
 
-int parent(void) {
-  struct hsearch_data *store = new_store();
-  parse_config(store, "ainod.conf");
-  search_store(store, "Workers");
-  search_store(store, "Datadir");
-  delete_store(store);
-}
+#endif // HANDLE_ERROR_H_
 
 
-int main(){
-  parent();
-  printf("Hello World.\n");
-}
