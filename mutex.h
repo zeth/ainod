@@ -17,9 +17,20 @@
   along with ainod; If not, see <http://www.gnu.org/licenses/>.
 ***/
 
-#ifndef AINOD_HANDLE_ERROR_H   /* Include guard */
-#define AINOD_HANDLE_ERROR_H
+/* Mutex support for ainod. */
 
-int handle_error(char *message, ...);
+#ifndef AINOD_MUTEX_H_   /* Include guard */
+#define AINOD_MUTEX_H_
 
-#endif // AINOD_HANDLE_ERROR_H
+#include <pthread.h>
+typedef pthread_mutex_t ainod_mutex;
+
+int new_mutex(ainod_mutex *mtx);
+
+int delete_mutex(ainod_mutex *mtx);
+
+int lock_mutexb(ainod_mutex *mtx);
+
+int unlock_mutex(ainod_mutex *mtx);
+
+#endif // AINOD_MUTEX_H_
