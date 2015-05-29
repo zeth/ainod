@@ -24,9 +24,11 @@
 #include <search.h>
 #include <pthread.h>
 #include <unistd.h>
+#include <sys/wait.h>
 #include "configparser.h"
 #include "asocket.h"
 #include "handleerror.h"
+#include "worker.h"
 
 int parent(void) {
   /* Make a Hash Table for config information. */
@@ -53,6 +55,21 @@ int parent(void) {
     handle_error("Error making mutex.");
   }
 
+  /* Create child worker processes */
+  for(i=0;i<number_of_workers;i++){
+    if (!fork()) {
+      child_worker(i, &mp);
+    }
+  }
+
+
+  /* Cleanup below */
+  
+  /* Make sure children are all finished. */
+  for(i=0;i<number_of_workers;i++){
+    (void) wait(NULL);
+  }
+  
   /* Bin the config information */
   delete_store(store);
 
