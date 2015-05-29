@@ -17,11 +17,11 @@
   along with ainod; If not, see <http://www.gnu.org/licenses/>.
 ***/
 
-#ifndef HANDLE_ERROR_H_   /* Include guard */
-#define HANDLE_ERROR_H_
+#ifndef AINOD_HANDLE_ERROR_H   /* Include guard */
+#define AINOD_HANDLE_ERROR_H
 
 int handle_error(char *message, ...);
 
-#endif // HANDLE_ERROR_H_
+#endif // AINOD_HANDLE_ERROR_H
 
 

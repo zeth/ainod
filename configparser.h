@@ -17,8 +17,8 @@
   along with ainod; If not, see <http://www.gnu.org/licenses/>.
 ***/
 
-#ifndef CONFIG_PARSER_H_   /* Include guard */
-#define CONFIG_PARSER_H_
+#ifndef AINOD_CONFIG_PARSER_H_   /* Include guard */
+#define AINOD_CONFIG_PARSER_H_
 
 #include <search.h>
 
@@ -42,4 +42,5 @@ int check_workers(struct hsearch_data *store);
 
 char *check_data_dir(struct hsearch_data *store);
 
-#endif // CONFIG_PARSER_H_
+#endif // AINOD_CONFIG_PARSER_H_
+

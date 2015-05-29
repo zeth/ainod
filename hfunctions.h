@@ -17,8 +17,8 @@
   along with ainod; If not, see <http://www.gnu.org/licenses/>.
 ***/
 
-#ifndef H_FUNCTIONS_H_   /* Include guard */
-#define H_FUNCTIONS_H_
+#ifndef H_FUNCTIONS_H   /* Include guard */
+#define H_FUNCTIONS_H
 
 typedef int (*data_handler) (char *data);
 typedef int (*entry_handler) (ENTRY *entry);
@@ -52,4 +52,4 @@ int hiter_data_r(struct hsearch_data *htab, data_handler cmb);
 */
 int hiter_items_r(struct hsearch_data *htab, entry_handler cmb);
 
-#endif // H_FUNCTIONS_H_
+#endif // H_FUNCTIONS_H

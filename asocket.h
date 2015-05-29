@@ -1,7 +1,7 @@
-#ifndef ASOCKET_H
-#define ASOCKET_H
+#ifndef AINOD_ASOCKET_H
+#define AINOD_ASOCKET_H
 
 int get_socket(void);
 
-#endif /* ASOCKET_H */
+#endif /* AINOD_ASOCKET_H */
 
