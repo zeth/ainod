@@ -29,6 +29,7 @@
 #include "asocket.h"
 #include "handleerror.h"
 #include "worker.h"
+#include "mutex.h"
 
 int parent(void) {
   /* Make a Hash Table for config information. */
