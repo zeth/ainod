@@ -29,7 +29,7 @@ int new_mutex(ainod_mutex *mtx);
 
 int delete_mutex(ainod_mutex *mtx);
 
-int lock_mutexb(ainod_mutex *mtx);
+int lock_mutex(ainod_mutex *mtx);
 
 int unlock_mutex(ainod_mutex *mtx);
 

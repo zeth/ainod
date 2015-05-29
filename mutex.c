@@ -46,7 +46,7 @@ int delete_mutex(ainod_mutex *mtx) {
   return 0;
 }
 
-int lock_mutexb(ainod_mutex *mtx) {
+int lock_mutex(ainod_mutex *mtx) {
   if (pthread_mutex_lock(mtx) == 0) {
     return 0;
   } else {
