@@ -35,7 +35,11 @@ int delete_store(struct hsearch_data *store);
 int parse_config(struct hsearch_data *store,
                  const char *filename);
 
-int search_store(struct hsearch_data *store,
-                 char *key);
+char *search_store(struct hsearch_data *store,
+                   char *key);
+
+int check_workers(struct hsearch_data *store);
+
+char *check_data_dir(struct hsearch_data *store);
 
 #endif // CONFIG_PARSER_H_

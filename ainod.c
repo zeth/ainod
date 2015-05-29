@@ -19,9 +19,11 @@
 
 #define _GNU_SOURCE
 
+#include <stdlib.h>
 #include <stdio.h>
 #include <search.h>
 #include <pthread.h>
+#include <unistd.h>
 #include "configparser.h"
 #include "asocket.h"
 #include "handleerror.h"
@@ -32,8 +34,10 @@ int parent(void) {
 
   /* Fill it from the config manager */
   parse_config(store, "ainod.conf");
-  search_store(store, "Workers");
-  search_store(store, "Datadir");
+
+  /* Get out the relevant settings */
+  int number_of_workers = check_workers(store);
+  char *datadir = check_data_dir(store);
 
   /* Get the incoming socket */
   int incoming = get_socket();
@@ -51,7 +55,7 @@ int parent(void) {
 
   /* Bin the config information */
   delete_store(store);
-  
+
   /* Bin the mutex */
   pthread_mutex_destroy (&mp);
 }

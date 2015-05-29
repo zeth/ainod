@@ -249,17 +249,37 @@ int parse_config(struct hsearch_data *store,
   return 0;
 }
 
-int search_store(struct hsearch_data *store,
-                 char *key) {
+char *search_store(struct hsearch_data *store,
+                   char *key) {
     ENTRY search, *search_result;
     search.key = key;
     hsearch_r(search, FIND, &search_result, store);
     if (search_result == NULL) {
-      printf("Empty\n");
+      return NULL;
     } else {
-      printf("Found: %s\n", (char *)search_result->data);
+      return (char *)search_result->data;
     }
     return 0;
+}
+
+/** Check Workers setting. If not set, then use number of CPUs. */
+int check_workers(struct hsearch_data *store) {
+  char *process = search_store(store, "Workers");
+  int processors_int;
+  if (process) {
+    processors_int = atoi(process);
+  } else {
+    processors_int = (int)sysconf(_SC_NPROCESSORS_ONLN);
+  }
+  return processors_int;
+}
+
+char *check_data_dir(struct hsearch_data *store) {
+  char *datadir = search_store(store, "Datadir");
+  if (!datadir) {
+    datadir = "/var/lib/ainod";
+  }
+  return datadir;
 }
 
 //int main(void) {
