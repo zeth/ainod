@@ -45,37 +45,29 @@ int parent(void) {
   /* Get the incoming socket */
   int incoming = get_socket();
 
-  /* Get a mutex for it */
-  pthread_mutex_t mp;
-  pthread_mutexattr_t attr;
-  int i = pthread_mutexattr_init(&attr);
-  int j = pthread_mutexattr_setpshared (&attr, PTHREAD_PROCESS_SHARED);
-  int k = pthread_mutexattr_setrobust(&attr, PTHREAD_MUTEX_ROBUST);
-  int l = pthread_mutex_init(&mp, &attr);
-  if (!((i == 0) && (j == 0) && (k == 0) && (l == 0))) {
-    handle_error("Error making mutex.");
-  }
+  ainod_mutex mtx;
+  new_mutex(&mtx);
+  int i;
 
   /* Create child worker processes */
   for(i=0;i<number_of_workers;i++){
     if (!fork()) {
-      child_worker(i, &mp);
+      child_worker(i, &mtx);
     }
   }
 
-
   /* Cleanup below */
-  
+
   /* Make sure children are all finished. */
   for(i=0;i<number_of_workers;i++){
     (void) wait(NULL);
   }
-  
+
   /* Bin the config information */
   delete_store(store);
 
   /* Bin the mutex */
-  pthread_mutex_destroy (&mp);
+  delete_mutex(&mtx);
 }
 
 
