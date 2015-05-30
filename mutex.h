@@ -23,14 +23,15 @@
 #define AINOD_MUTEX_H_
 
 #include <pthread.h>
-typedef pthread_mutex_t ainod_mutex;
 
-int new_mutex(ainod_mutex *mtx);
+int new_mutex(pthread_mutex_t *mtx);
 
-int delete_mutex(ainod_mutex *mtx);
+int delete_mutex(pthread_mutex_t *mtx);
 
-int lock_mutex(ainod_mutex *mtx);
+int lock_mutex(pthread_mutex_t *mtx);
 
-int unlock_mutex(ainod_mutex *mtx);
+int unlock_mutex(pthread_mutex_t *mtx);
+
+pthread_mutex_t *setup_mutex(void);
 
 #endif // AINOD_MUTEX_H_

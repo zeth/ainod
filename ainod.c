@@ -45,14 +45,16 @@ int parent(void) {
   /* Get the incoming socket */
   int incoming = get_socket();
 
-  ainod_mutex mtx;
-  new_mutex(&mtx);
+  /* Get the mutex */
+  pthread_mutex_t *mtx = setup_mutex();
+  //  ainod_mutex mtx;
+  //new_mutex(&mtx);
   int i;
 
   /* Create child worker processes */
   for(i=0;i<number_of_workers;i++){
     if (!fork()) {
-      child_worker(i, &mtx);
+      child_worker(i, mtx);
     }
   }
 
@@ -67,7 +69,7 @@ int parent(void) {
   delete_store(store);
 
   /* Bin the mutex */
-  delete_mutex(&mtx);
+  delete_mutex(mtx);
 }
 
 

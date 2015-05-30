@@ -22,7 +22,66 @@
 #include "handleerror.h"
 #include "mutex.h"
 
-int new_mutex(ainod_mutex *mtx) {
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <pthread.h>
+#include <string.h>
+#include <errno.h>
+#include <sys/types.h>
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
+#define MUTEX "/ainod_mutex_lock"
+
+
+pthread_mutex_t *setup_mutex(void) {
+  pthread_mutex_t *mutex;
+  int shared_mem;
+  int mode = S_IRWXU | S_IRWXG;
+  pthread_mutexattr_t mutex_attr;
+
+  shared_mem = shm_open(MUTEX, O_CREAT | O_RDWR | O_TRUNC, mode);
+
+  if (shared_mem < 0) {
+    handle_error("Failed to create shared memory.");
+  }
+  if (ftruncate(shared_mem, sizeof(pthread_mutex_t)) == -1) {
+    handle_error("Failed to set correct size of shared memory space.");
+  }
+  mutex = (pthread_mutex_t*) mmap(NULL, sizeof(pthread_mutex_t),
+                                  PROT_READ | PROT_WRITE, MAP_SHARED, shared_mem, 0);
+  if (mutex == MAP_FAILED ) {
+    handle_error("Failed to map the mutex into shared memory.");
+  }
+  if (pthread_mutexattr_init(&mutex_attr) != 0) {
+    handle_error("Failed to create mutex attribute");
+  }
+  if (pthread_mutexattr_setpshared(&mutex_attr, PTHREAD_PROCESS_SHARED) != 0) {
+    handle_error("Failed to share mutex.");
+  }
+  if (pthread_mutexattr_settype(&mutex_attr, PTHREAD_MUTEX_ERRORCHECK) != 0) {
+    handle_error("Failed to set mutex type.");
+  }
+  if (pthread_mutex_init(mutex, &mutex_attr) != 0) {
+    handle_error("Failed to initialise mutex.");
+  }
+  if (pthread_mutexattr_destroy(&mutex_attr) != 0) {
+    handle_error("Failed to delete mutex attribute.");
+  }
+  return mutex;
+}
+
+
+int delete_mutex(pthread_mutex_t *mutex) {
+  pthread_mutex_destroy(mutex);
+  shm_unlink(MUTEX);
+  return 0;
+}
+
+
+int new_mutex(pthread_mutex_t *mtx) {
   pthread_mutexattr_t attr;
   if (pthread_mutexattr_init(&attr) != 0) {
     handle_error("Failed to create mutex attribute");
@@ -39,14 +98,14 @@ int new_mutex(ainod_mutex *mtx) {
   return 0;
 }
 
-int delete_mutex(ainod_mutex *mtx) {
+int delete_mutexb(pthread_mutex_t *mtx) {
   if (pthread_mutex_destroy(mtx) != 0) {
     handle_error("Failed to delete mutex.");
   }
   return 0;
 }
 
-int lock_mutex(ainod_mutex *mtx) {
+int lock_mutex(pthread_mutex_t *mtx) {
   if (pthread_mutex_lock(mtx) == 0) {
     return 0;
   } else {
@@ -54,7 +113,7 @@ int lock_mutex(ainod_mutex *mtx) {
   }
 }
 
-int unlock_mutex(ainod_mutex *mtx) {
+int unlock_mutex(pthread_mutex_t *mtx) {
   if (pthread_mutex_unlock(mtx) == 0) {
     return 0;
   } else {

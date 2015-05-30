@@ -3,6 +3,8 @@
 #include <pthread.h>
 #include "worker.h"
 #include "mutex.h"
+#include <unistd.h>
+
 
 /* child_worker is the program that the children each run.
 
@@ -12,10 +14,13 @@
 
 void child_worker(int worker,
                   pthread_mutex_t *mp) {
-  printf("CHILD %d : Exiting.\n", worker);
+  printf("CHILD %d, try to get mutex\n", worker);
   int first = lock_mutex(mp);
-  printf("First %d lock gives %d.\n", worker, first);
-  int second = lock_mutex(mp);
-  printf("Second %d lock gives %d.\n", worker, second);
+  printf("CHILD %d lock gives %d.\n", worker, first);
+  printf("CHILD %d has lock.\n", worker);
+  sleep(10);
+  int second = unlock_mutex(mp);
+  printf("CHILD %d unlock gives %d.\n", worker, first);
+  printf("CHILD %d : Exiting.\n", worker);
   exit(0);
 }
