@@ -3,6 +3,7 @@
 
 
 void child_worker(int worker,
-                  pthread_mutex_t *mp);
+                  pthread_mutex_t *mp,
+                  char *datadir);
 
 #endif /* AINOD_WORKER_H */

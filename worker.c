@@ -13,14 +13,16 @@
 */
 
 void child_worker(int worker,
-                  pthread_mutex_t *mp) {
+                  pthread_mutex_t *mp,
+                  char *datadir) {
   printf("CHILD %d, try to get mutex\n", worker);
   int first = lock_mutex(mp);
   printf("CHILD %d lock gives %d.\n", worker, first);
   printf("CHILD %d has lock.\n", worker);
-  sleep(10);
+  sleep(2);
   int second = unlock_mutex(mp);
   printf("CHILD %d unlock gives %d.\n", worker, first);
   printf("CHILD %d : Exiting.\n", worker);
+  free(datadir);
   exit(0);
 }

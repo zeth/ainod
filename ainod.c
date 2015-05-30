@@ -24,6 +24,7 @@
 #include <search.h>
 #include <pthread.h>
 #include <unistd.h>
+#include <string.h>
 #include <sys/wait.h>
 #include "configparser.h"
 #include "asocket.h"
@@ -40,8 +41,12 @@ int parent(void) {
 
   /* Get out the relevant settings */
   int number_of_workers = check_workers(store);
-  char *datadir = check_data_dir(store);
+  char *datadir = strdup(check_data_dir(store));
 
+  /* Bin the config information */
+  delete_store(store);
+  printf("Debug here %d %s\n", number_of_workers, datadir);
+  
   /* Get the incoming socket */
   int incoming = get_socket();
 
@@ -54,7 +59,7 @@ int parent(void) {
   /* Create child worker processes */
   for(i=0;i<number_of_workers;i++){
     if (!fork()) {
-      child_worker(i, mtx);
+      child_worker(i, mtx, datadir);
     }
   }
 
@@ -66,8 +71,8 @@ int parent(void) {
   }
 
   /* Bin the config information */
-  delete_store(store);
-
+  //delete_store(store);
+  free(datadir);
   /* Bin the mutex */
   delete_mutex(mtx);
 }
