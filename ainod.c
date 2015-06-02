@@ -52,17 +52,14 @@ int parent(void) {
 
   /* Get the mutex */
   pthread_mutex_t *mtx = setup_mutex();
-  //  ainod_mutex mtx;
-  //new_mutex(&mtx);
   int i;
-
   /* Create child worker processes */
   for(i=0;i<number_of_workers;i++){
     if (!fork()) {
-      child_worker(i, mtx, datadir);
+      child_worker(i, mtx, datadir, incoming);
     }
   }
-
+  printf("End %s\n");
   /* Cleanup below */
 
   /* Make sure children are all finished. */

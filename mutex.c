@@ -106,7 +106,7 @@ int delete_mutexb(pthread_mutex_t *mtx) {
 }
 
 int lock_mutex(pthread_mutex_t *mtx) {
-  if (pthread_mutex_lock(mtx) == 0) {
+  if (pthread_mutex_trylock(mtx) == 0) {
     return 0;
   } else {
     return -1;
