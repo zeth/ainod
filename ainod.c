@@ -45,7 +45,6 @@ int parent(void) {
 
   /* Bin the config information */
   delete_store(store);
-  printf("Debug here %d %s\n", number_of_workers, datadir);
   
   /* Get the incoming socket */
   int incoming = get_socket();
@@ -59,7 +58,6 @@ int parent(void) {
       child_worker(i, mtx, datadir, incoming);
     }
   }
-  printf("End %s\n");
   /* Cleanup below */
 
   /* Make sure children are all finished. */

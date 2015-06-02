@@ -67,16 +67,16 @@ void child_worker(int worker,
   struct epoll_event event;
   event.data.fd = incoming;
   event.events = EPOLLIN | EPOLLET;
+  /* event.events = EPOLLIN; */
   if (epoll_ctl (epoll_fd, EPOLL_CTL_ADD, incoming, &event) == -1) {
-    handle_error("Could add socket to epoll.");
+    handle_error("Could not add socket to epoll.");
   }
 
   struct epoll_event *events;
   events = calloc (MAXEVENTS, sizeof event);
-
   while (1) {
     int number_of_events = epoll_wait (epoll_fd, events, MAXEVENTS, -1);
-    printf("CHILD %d, try to get mutex\n", worker);
+    /* printf("CHILD %d, try to get mutex\n", worker); */
     int first = lock_mutex(mp);
     if (first == 0) {
       printf("CHILD %d, I won the mutex! %d events \n", worker, number_of_events);
@@ -84,12 +84,20 @@ void child_worker(int worker,
       for (i = 0; i < number_of_events; i++) {
         /* What to do here now ? */
         if (events[i].events & EPOLLIN) {
-          int s = read(events[i].data.fd, buf, MAX_BUF);
-          if (s == -1)
-            handle_error("read");
-          printf("    read %d bytes: %.*s\n", s, s, buf);
+          printf("i is %d\n", i);
+          /* Accept the connection */
+          int cfd;
+          cfd = accept(events[i].data.fd, NULL, NULL);
+          printf("cfd is %d", cfd);
+          if (cfd == -1) {
+            handle_error("Error in accepting socket");
+          }
+        } else {
+          printf("Some other kind of event.");
         }
+        
       }
+      sleep(5);
       int second = unlock_mutex(mp);
 
     } else {
