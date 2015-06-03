@@ -88,10 +88,10 @@ void child_worker(int worker,
           }
           char buf[100];
           ssize_t numRead;
-          char *response = "Hello\n";
+          char *response = "{Result: OK}\n";
           int response_success = send(cfd,
                                       response,
-                                      sizeof(response)+1,
+                                      13,
                                       MSG_DONTWAIT);
           if (response_success == -1) {
             handle_error("Could not send to client socket.");
