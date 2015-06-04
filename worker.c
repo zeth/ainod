@@ -19,23 +19,13 @@
 #define BACKLOG 10
 #define MAX_EPOLL_FD 4096
 #define MAXEVENTS 64
-#define MAX_BUF 1000
+#define PAGE_SIZE 4096
 
-static void setnonblocking(int fd)
-{
-  int opts;
-  opts = fcntl(fd, F_GETFL);
-  if (opts < 0) {
-    handle_error("fcntl failed\n");
-    return;
-  }
-  opts = opts | O_NONBLOCK;
-  if (fcntl(fd, F_SETFL, opts) < 0) {
-    handle_error("fcntl failed\n");
-    return;
-  }
-  return;
+int long_read(int cfd, char *buf) {
+  printf("Long Read\n");
+
 }
+
 
 /* child_worker is the program that the children each run.
 
@@ -86,9 +76,13 @@ void child_worker(int worker,
           if (cfd == -1) {
             handle_error("Error in accepting connection");
           }
-          char buf[100];
-          ssize_t numRead;
-          char *response = "{Result: OK}\n";
+          char *buf = malloc(PAGE_SIZE);
+          ssize_t length_read = read(cfd, buf, PAGE_SIZE);
+          if (length_read == PAGE_SIZE) {
+            long_read(cfd, buf);
+          }
+
+          char *response = "{result: OK}\n";
           int response_success = send(cfd,
                                       response,
                                       13,
@@ -96,12 +90,7 @@ void child_worker(int worker,
           if (response_success == -1) {
             handle_error("Could not send to client socket.");
           }
-          /* It is the while loop here that sucks. */
-          while ((numRead = read(cfd, buf, 1000)) > 0) {
-            if (write(STDOUT_FILENO, buf, numRead) != numRead) {
-              handle_error("partial/failed write");
-            }
-          }
+          printf("We read %d from the buffer.\n", length_read);
           close(cfd);
         } else {
           printf("Some other kind of event.");
