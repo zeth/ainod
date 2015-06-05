@@ -2,28 +2,28 @@
 #include <stdio.h>
 #include <pthread.h>
 #include <unistd.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/epoll.h>
 #include <errno.h>
 #include <netdb.h>
 #include <fcntl.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/epoll.h>
 
 #include "handleerror.h"
 #include "worker.h"
 #include "mutex.h"
-
-#include <string.h>
-
 
 #define BACKLOG 10
 #define MAX_EPOLL_FD 4096
 #define MAXEVENTS 64
 #define PAGE_SIZE 4096
 
-int long_read(int cfd, char *buf) {
+int long_read(int *cfd, char *buf) {
   printf("Long Read\n");
-
+  buf = realloc(buf, 8192);
+  ssize_t length_read = read(*cfd, buf + PAGE_SIZE, PAGE_SIZE);
+  printf("We read %d from the buffer.\n", buf[4196]);
 }
 
 
@@ -78,8 +78,9 @@ void child_worker(int worker,
           }
           char *buf = malloc(PAGE_SIZE);
           ssize_t length_read = read(cfd, buf, PAGE_SIZE);
+          //printf("We read %d from the buffer.\n", length_read);
           if (length_read == PAGE_SIZE) {
-            long_read(cfd, buf);
+            long_read(&cfd, buf);
           }
 
           char *response = "{result: OK}\n";
@@ -90,16 +91,13 @@ void child_worker(int worker,
           if (response_success == -1) {
             handle_error("Could not send to client socket.");
           }
-          printf("We read %d from the buffer.\n", length_read);
           close(cfd);
+          free(buf);
         } else {
           printf("Some other kind of event.");
         }
-
       }
-
       int second = unlock_mutex(mp);
-
     } else {
       /** printf("CHILD %d, I lost the mutex!\n", worker, first); */
     }
