@@ -19,11 +19,13 @@
 #define MAXEVENTS 64
 #define PAGE_SIZE 4096
 
-int long_read(int *cfd, char *buf) {
-  printf("Long Read\n");
-  buf = realloc(buf, 8192);
-  ssize_t length_read = read(*cfd, buf + PAGE_SIZE, PAGE_SIZE);
-  printf("We read %d from the buffer.\n", buf[4196]);
+int long_read(int *cfd, char *buf, int current_length) {
+  buf = realloc(buf, current_length + PAGE_SIZE);
+  ssize_t length_read = recv(*cfd,
+                             buf + current_length,
+                             PAGE_SIZE,
+                             MSG_DONTWAIT);
+  return length_read;
 }
 
 
@@ -78,10 +80,12 @@ void child_worker(int worker,
           }
           char *buf = malloc(PAGE_SIZE);
           ssize_t length_read = read(cfd, buf, PAGE_SIZE);
-          //printf("We read %d from the buffer.\n", length_read);
-          if (length_read == PAGE_SIZE) {
-            long_read(&cfd, buf);
+          int current_length = PAGE_SIZE;
+          while (length_read == PAGE_SIZE) {
+            length_read = long_read(&cfd, buf, current_length);
+            current_length += PAGE_SIZE;
           }
+          printf("End length. %d\n", current_length);
 
           char *response = "{result: OK}\n";
           int response_success = send(cfd,
