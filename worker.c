@@ -20,7 +20,6 @@
 #define PAGE_SIZE 4096
 
 int long_read(int *cfd, char *buf, int current_length) {
-  buf = realloc(buf, current_length + PAGE_SIZE);
   ssize_t length_read = recv(*cfd,
                              buf + current_length,
                              PAGE_SIZE,
@@ -82,6 +81,7 @@ void child_worker(int worker,
           ssize_t length_read = read(cfd, buf, PAGE_SIZE);
           int current_length = PAGE_SIZE;
           while (length_read == PAGE_SIZE) {
+            buf = realloc(buf, current_length + PAGE_SIZE);
             length_read = long_read(&cfd, buf, current_length);
             current_length += PAGE_SIZE;
           }

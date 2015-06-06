@@ -22,7 +22,7 @@ def send_data_to_socket(socket_name=ABSTRACT_SOCKET_NAME):
     finally:
         sock.close()
 
-    print("Sent:     {}".format(data))
+    #print("Sent:     {}".format(data))
     print("Received: {}".format(received))
 
 def main():
