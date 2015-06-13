@@ -4,7 +4,7 @@
 AC_PREREQ([2.69])
 AC_INIT([ainod], [0.1], [theology@gmail.com])
 : ${CFLAGS=-Werror -O3 -g}
-AC_CONFIG_SRCDIR([hfunctions.h])
+AC_CONFIG_SRCDIR([src/hfunctions.h])
 AC_CONFIG_HEADERS([config.h])
 
 # Checks for programs.
@@ -30,5 +30,9 @@ AC_FUNC_MMAP
 AC_CHECK_FUNCS([ftruncate memset socket strchr strcspn strdup strerror strndup strspn])
 
 # Check for dependencies
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([
+ Makefile
+ src/Makefile
+])
+# AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
