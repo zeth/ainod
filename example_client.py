@@ -19,9 +19,10 @@ def send_data_to_socket(socket_name=ABSTRACT_SOCKET_NAME):
         # Connect to server and send data
         sock.connect("\x00%s" % socket_name)
 
-        while sent < to_be_sent:
-            last_blob = sock.send(bytes(data + "\n", "utf-8"))
-            sent += last_blob
+        sock.sendall(bytes(data + "\n", "utf-8"))
+        #while sent < to_be_sent:
+        ##    last_blob = sock.send(bytes(data + "\n", "utf-8")[sent:])
+        #    sent += last_blob
 
         # Receive data from the server and shut down
         received = str(sock.recv(1024), "utf-8")

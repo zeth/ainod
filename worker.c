@@ -20,19 +20,10 @@
 #define PAGE_SIZE 4096
 
 int long_read(int *cfd, char *buf, int current_length) {
-  // Note need some error handling here
-  errno = 0;
   ssize_t length_read = recv(*cfd,
                              buf + current_length,
                              PAGE_SIZE,
                              MSG_DONTWAIT);
-  if (length_read = -1) {
-    int errsv = errno;
-    printf("Long read error %d.\n", errsv);
-    if (errsv = EAGAIN) {
-      printf("Confused.\n");
-    }
-  }
   return length_read;
 }
 
@@ -88,21 +79,15 @@ void child_worker(int worker,
           }
           char *buf = malloc(PAGE_SIZE);
           ssize_t length_read = read(cfd, buf, PAGE_SIZE);
-          if (length_read < 0) {
-            handle_error("Error in first read.");
-          }
           int current_length = PAGE_SIZE;
           while (length_read == PAGE_SIZE) {
-            // Note need some error handling here
             buf = realloc(buf, current_length + PAGE_SIZE);
             length_read = long_read(&cfd, buf, current_length);
-            if (length_read = -1) {
-              printf("Long read error. Current len %d.\n", current_length);
-            } else {
-            current_length += length_read;
-            }
+            current_length += PAGE_SIZE;
           }
-          printf("A. End length. %d\n", current_length);
+          printf("End length. %d\n", current_length);
+          printf("Hello %d and all that.\n", buf[106495]);
+          printf("strlen %d and all that.\n", buf[106495]);
 
           char *response = "{result: OK}\n";
           int response_success = send(cfd,
@@ -112,7 +97,6 @@ void child_worker(int worker,
           if (response_success == -1) {
             handle_error("Could not send to client socket.");
           }
-          printf(" B. Got to here\n");
           close(cfd);
           free(buf);
         } else {

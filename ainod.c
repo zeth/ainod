@@ -32,7 +32,20 @@
 #include "worker.h"
 #include "mutex.h"
 
+void sig_handler(int signo)
+{
+  if (signo == SIGINT)
+    printf("received SIGINT\n");
+  exit(0);
+}
+
+
 int parent(void) {
+  /* Setup signal */
+  if (signal(SIGINT, sig_handler) == SIG_ERR) {
+    printf("\ncan't catch SIGINT\n");
+  }
+
   /* Make a Hash Table for config information. */
   struct hsearch_data *store = new_store();
 
@@ -45,7 +58,7 @@ int parent(void) {
 
   /* Bin the config information */
   delete_store(store);
-  
+
   /* Get the incoming socket */
   int incoming = get_socket();
 
