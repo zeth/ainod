@@ -1,0 +1,5 @@
+[Socket]
+ListenStream=@ainod
+
+[Install]
+WantedBy=sockets.target

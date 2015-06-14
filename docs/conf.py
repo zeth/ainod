@@ -228,10 +228,15 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
+#man_pages = [
+#    ('index', 'ainod', u'Ainod Documentation',
+#     [u'Zeth'], 1)
+#]
 man_pages = [
-    ('index', 'ainod', u'Ainod Documentation',
+    ('ainodconf', 'ainod.conf', u'Ainod Configuration Documentation',
      [u'Zeth'], 1)
 ]
+
 
 # If true, show URL addresses after external links.
 #man_show_urls = False
