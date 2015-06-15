@@ -20,6 +20,7 @@
 #define _GNU_SOURCE
 
 #include <stdlib.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <assert.h>
 #include <string.h>
@@ -29,9 +30,11 @@
 #include <errno.h>
 #include <limits.h>
 #include <search.h>
+#include <stdbool.h>
 #include "configparser.h"
 #include "hfunctions.h"
 #include "handleerror.h"
+
 
 char *SECTIONS[] = {"Daemon", "Other"};
 
@@ -274,6 +277,7 @@ int check_workers(struct hsearch_data *store) {
   return processors_int;
 }
 
+/** Check Datadir setting, if not set use /var/lib/ainod */
 char *check_data_dir(struct hsearch_data *store) {
   char *datadir = search_store(store, "Datadir");
   if (!datadir) {
@@ -281,6 +285,21 @@ char *check_data_dir(struct hsearch_data *store) {
   }
   return datadir;
 }
+
+/** Check boolean setting, if not set defaults to false */
+bool check_boolean_setting(struct hsearch_data *store,
+                            char *setting_name) {
+  char *setting = search_store(store, setting_name);
+  if (!setting) {
+    return false;
+  }
+  if (strcmp(setting, "true") == 0) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
 
 //int main(void) {
 //  struct hsearch_data *store = new_store();

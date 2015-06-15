@@ -26,7 +26,8 @@ Workers
 
 Takes a positive integer. Determines the number of worker child
 processes to create on daemon start up. If not specified, it will be
-set to the number of processor cores which is a conservative minimum.
+set to the number of processor cores which is a nice conservative
+minimum.
 
 Increasing this number will increase capacity and performance but
 being set too high can cause "thundering herd" type symptoms where the
@@ -42,20 +43,51 @@ Datadir
 The location for JSON data files to be stored. If not specified, the
 default is /var/lib/ainod
 
-{ "$ref": "person.json" }
-
 Require-protocol-version
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 Takes a boolean argument of true or false. Defaults to false. If true,
-the request will be rejected if it does not contain {"jsonrpc": "2.0"}
+the client's request will be rejected if it does not contain
+{"jsonrpc": "2.0"}
 
 Require-request-id
 ~~~~~~~~~~~~~~~~~~
 
 Takes a boolean argument of true or false. Defaults to false. If true,
-the request will be rejected if it does not contain an id field
-identifying the request.
+the client's request will be rejected if it does not contain an id
+field identifying the request. Incidentally, this was the behaviour
+outlined in JSON-RPC 1.0 specification.
+
+Silent-notifications
+~~~~~~~~~~~~~~~~~~~~
+
+Takes a boolean argument of true or false. Defaults to false.
+
+    Note: if Require-request-id (see above) is set to true, a missing
+    request id will always result in an error and no further
+    processing; obviously making this setting irrelevant in that
+    case. The remaining text below assumes Require-request-id is set
+    to false (the default).
+
+If this setting is false (the default) then a missing request id or a
+request id set to *null* will result in no special behaviour. The
+daemon will carry on and return a successful result or error as
+normal.
+
+If this setting is true then a missing request id or a request id
+set to *null* will result in the request being processed but no
+response at all being returned, even if there was an error in the
+request and the processing failed.
+
+The JSON-RPC specifications name such a request as a 'notification'.
+However, it is confusing for new users to send a request and receive
+no response; especially when they have simply forgotten the id (or
+sent null by mistake or design). Furthermore, use cases where the user
+never cares about errors seem quite obscure. In the words of Tim
+Peters:
+
+Errors should never pass silently.
+Unless explicitly silenced.
 
 Remote-schemas
 ~~~~~~~~~~~~~~
@@ -71,4 +103,3 @@ Takes a boolean argument of true or false. Whether the data ends with
 an End of File marker. If true then the daemon will reject any
 incoming data without the EOF marker; this way it rejects incomplete
 data earlier but reduces compatibility with some third party clients.
-

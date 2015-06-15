@@ -6,6 +6,7 @@
 #include <netdb.h>
 #include <fcntl.h>
 #include <string.h>
+#include <stdbool.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/epoll.h>
@@ -13,6 +14,7 @@
 #include "handleerror.h"
 #include "worker.h"
 #include "mutex.h"
+#include "methods.h"
 
 #define BACKLOG 10
 #define MAX_EPOLL_FD 4096
@@ -37,7 +39,8 @@ int long_read(int *cfd, char *buf, int current_length) {
 void child_worker(int worker,
                   pthread_mutex_t *mp,
                   char *datadir,
-                  int incoming) {
+                  int incoming,
+                  bool silentnote) {
   /** Listen to socket */
 
   if (listen(incoming, BACKLOG) == -1) {
@@ -86,8 +89,6 @@ void child_worker(int worker,
             current_length += PAGE_SIZE;
           }
           printf("End length. %d\n", current_length);
-          printf("Hello %d and all that.\n", buf[106495]);
-          printf("strlen %d and all that.\n", buf[106495]);
 
           char *response = "{result: OK}\n";
           int response_success = send(cfd,
@@ -97,6 +98,7 @@ void child_worker(int worker,
           if (response_success == -1) {
             handle_error("Could not send to client socket.");
           }
+          process_buffer(buf, silentnote);
           close(cfd);
           free(buf);
         } else {

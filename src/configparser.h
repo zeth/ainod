@@ -21,6 +21,7 @@
 #define AINOD_CONFIG_PARSER_H_
 
 #include <search.h>
+#include <stdbool.h>
 
 #define CONFIG_STORE_MAX 20
 
@@ -41,6 +42,9 @@ char *search_store(struct hsearch_data *store,
 int check_workers(struct hsearch_data *store);
 
 char *check_data_dir(struct hsearch_data *store);
+
+bool check_boolean_setting(struct hsearch_data *store,
+                            char *setting_name);
 
 #endif // AINOD_CONFIG_PARSER_H_
 

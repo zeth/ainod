@@ -55,6 +55,11 @@ int parent(void) {
   /* Get out the relevant settings */
   int number_of_workers = check_workers(store);
   char *datadir = strdup(check_data_dir(store));
+  bool silentnote = check_boolean_setting(store, "Silent-notifications");
+  bool req_prot = check_boolean_setting(store, "Require-protocol-version");
+  bool req_req_id = check_boolean_setting(store, "Require-request-id");
+  bool remote_schemas = check_boolean_setting(store, "Remote-schemas");
+  bool eof_marker = check_boolean_setting(store, "EOF-marker");
 
   /* Bin the config information */
   delete_store(store);
@@ -68,7 +73,7 @@ int parent(void) {
   /* Create child worker processes */
   for(i=0;i<number_of_workers;i++){
     if (!fork()) {
-      child_worker(i, mtx, datadir, incoming);
+      child_worker(i, mtx, datadir, incoming, silentnote);
     }
   }
   /* Cleanup below */

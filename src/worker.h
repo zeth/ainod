@@ -5,6 +5,7 @@
 void child_worker(int worker,
                   pthread_mutex_t *mp,
                   char *datadir,
-                  int incoming);
+                  int incoming,
+                  bool silentnote);
 
 #endif /* AINOD_WORKER_H */
