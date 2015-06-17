@@ -25,7 +25,7 @@ const char *create_response(json_object *request_id,
   json_object *protversion = json_object_new_string("2.0");
   json_object_object_add(response,"jsonrpc", protversion);
   json_object_object_add(response, "id", request_id);
-  if (success = true) {
+  if (success == true) {
     json_object_object_add(response, "result", data);
   } else {
     json_object_object_add(response, "error", data);
@@ -40,17 +40,16 @@ const char *create_response(json_object *request_id,
   //json_object_put(response);
 }
 
-json_object *create_error_object(json_object *request_id,
-                                 int error_code,
-                                 const char *message) {
-  /*Create a json object*/
-  json_object * error_object = json_object_new_object();
+int init_error_object(json_object **error_object,
+                      json_object *request_id,
+                      int error_code,
+                      const char *message) {
   /* Add the error code and message */
-  json_object *error_code_obj = json_object_new_int(error_code);
-  json_object *message_obj = json_object_new_string(message);
-  json_object_object_add(error_object,"code", error_code_obj);
-  json_object_object_add(error_object, "message", message_obj);
-  return error_object;
+  json_object * error_code_obj = json_object_new_int(error_code);
+  json_object * message_obj = json_object_new_string(message);
+  json_object_object_add(*error_object, "code", error_code_obj);
+  json_object_object_add(*error_object, "message", message_obj);
+  return 0;
 };
 
 const char *error_response();
@@ -123,8 +122,8 @@ int get_request_id(json_object **identifier,
         return 0;
       }
       /* if we got here then we wanted an int but got a string, throw
-         an error back to the client! TODO! */
-      printf("2. Send an error to client please.\n");
+         an error back to the client! */
+      return JSON_SCHEMA_ERROR_INVALID_REQUEST;
     }
     if (id_type == json_type_int) {
       if (strcmp(req_id_format, "int") == 0) {
@@ -132,12 +131,11 @@ int get_request_id(json_object **identifier,
         return 0;
       }
       if (strcmp(req_id_format, "rpc") == 0) {
-
         return 0;
       }
       /* if we got here then we wanted a string but got an int, throw
          error to client. */
-      printf("3. Send an error to client please.\n");
+      return JSON_SCHEMA_ERROR_INVALID_REQUEST;
     }
     if (id_type == json_type_double) {
       if (strcmp(req_id_format, "rpc") == 0) {
@@ -145,7 +143,7 @@ int get_request_id(json_object **identifier,
       }
       /* if we got here then we wanted a string or an int but got a
          number, throw error to client. */
-      printf("4. Send an error to client please.\n");
+      return JSON_SCHEMA_ERROR_INVALID_REQUEST;
     }
     if (id_type == json_type_null) {
       if (strcmp(req_id_format, "rpc") == 0) {
@@ -154,11 +152,11 @@ int get_request_id(json_object **identifier,
       }
       /* if we got here then we wanted a string or an int but got a
          null, throw error to client. */
-      printf("5. Send an error to client please.\n");
+      return JSON_SCHEMA_ERROR_INVALID_REQUEST;
     }
     /* if we got here then the request id needs to be a particular
        type or set of types but is an array or an int so throw an error*/
-    printf("6. Send an error to client please.");
+    return JSON_SCHEMA_ERROR_INVALID_REQUEST;
   } else {
     /* No id found */
     if (silentnote) {
@@ -170,8 +168,6 @@ int get_request_id(json_object **identifier,
   }
   return 0;
 }
-
-
 
 const char *handle(const char *method_name,
                    json_object *request_id) {
@@ -208,6 +204,7 @@ const char *process_buffer(char *buf,
                            bool silentnote,
                            char *req_id_format) {
   json_object *root_object;
+  const char *response_text;
   root_object = json_tokener_parse(buf);
   const char *method_name = get_method_name(root_object);
   json_object *identifier;
@@ -215,7 +212,20 @@ const char *process_buffer(char *buf,
                                root_object,
                                silentnote,
                                req_id_format);
-  const char *response_text = handle(method_name, identifier);
+  if (success == 0) {
+    response_text = handle(method_name, identifier);
+  } else if (success = JSON_SCHEMA_ERROR_INVALID_REQUEST) {
+    printf("Right place\n");
+    json_object * error_object = json_object_new_object();
+    init_error_object(&error_object,
+                      identifier,
+                      JSON_SCHEMA_ERROR_INVALID_REQUEST,
+                      AINOD_INVALID_REQ_ID);
+    response_text = create_response(identifier,
+                                    error_object,
+                                    false);
+    //json_object_put(error_object);
+  }
   // tidy up before return
   json_object_put(root_object);
   return response_text;
