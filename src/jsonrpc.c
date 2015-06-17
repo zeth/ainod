@@ -5,7 +5,9 @@
 #include <uuid/uuid.h>
 #include <json-c/json.h>
 #include "jsonschema.h"
-#include "methods.h"
+#include "jsonrpc.h"
+
+/** Support of JSON RPC within Ainod */
 
 char *get_id(void) {
   char *id;

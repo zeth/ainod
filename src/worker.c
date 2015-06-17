@@ -14,7 +14,7 @@
 #include "handleerror.h"
 #include "worker.h"
 #include "mutex.h"
-#include "methods.h"
+#include "jsonrpc.h"
 
 #define BACKLOG 10
 #define MAX_EPOLL_FD 4096
