@@ -1,7 +1,6 @@
-#ifndef AINOD_METHODS_H
-#define AINOD_METHODS_H
+#ifndef AINOD_JSONRPC_H
+#define AINOD_JSONRPC_H
 
-char *get_id(void);
 const char *process_buffer(char *buf,
                            bool silentnote,
                            char *req_id_format,
@@ -12,4 +11,4 @@ const char *process_buffer(char *buf,
 
 #define AINOD_RPC_SILENT_NOTIFICATION 666
 
-#endif /* AINOD_METHODS_H */
+#endif /* AINOD_JSONRPC_H */

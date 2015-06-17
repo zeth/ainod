@@ -2,21 +2,12 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
-#include <uuid/uuid.h>
 #include <json-c/json.h>
 #include "jsonschema.h"
 #include "jsonrpc.h"
+#include "methods.h"
 
 /** Support of JSON RPC within Ainod */
-
-char *get_id(void) {
-  char *id;
-  uuid_t uuid;
-  id = malloc(128);
-  uuid_generate(uuid);
-  uuid_unparse(uuid, id);
-  return id;
-}
 
 const char *create_response(json_object *request_id,
                             json_object *data,
@@ -53,33 +44,6 @@ int init_error_object(json_object **error_object,
   json_object_object_add(*error_object, "message", message_obj);
   return 0;
 };
-
-const char *error_response();
-
-int get() {
-  printf("Get.\n");
-}
-
-int create() {
-  printf("Create.\n");
-}
-
-int delete() {
-  printf("Delete.\n");
-}
-
-int update() {
-  printf("Update.\n");
-}
-
-int replace() {
-  printf("Replace.\n");
-}
-
-int reindex() {
-  printf("Index.\n");
-}
-
 
 const char *get_method_name(json_object *root_object) {
   json_object *method_object;
