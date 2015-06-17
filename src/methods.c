@@ -16,8 +16,44 @@ char *get_id(void) {
   return id;
 }
 
+const char *create_response(json_object *request_id,
+                            json_object *data,
+                            bool success) {
+  /*Create a json object*/
+  json_object * response = json_object_new_object();
+  /*Add the protocol version*/
+  json_object *protversion = json_object_new_string("2.0");
+  json_object_object_add(response,"jsonrpc", protversion);
+  json_object_object_add(response, "id", request_id);
+  if (success = true) {
+    json_object_object_add(response, "result", data);
+  } else {
+    json_object_object_add(response, "error", data);
+  }
 
-int create_error();
+  const char *response_text;
+  response_text = json_object_to_json_string(response);
+  /*Now printing the json object*/
+  printf ("The json object created: %s \n",
+          response_text);
+  return response_text;
+  //json_object_put(response);
+}
+
+json_object *create_error_object(json_object *request_id,
+                                 int error_code,
+                                 const char *message) {
+  /*Create a json object*/
+  json_object * error_object = json_object_new_object();
+  /* Add the error code and message */
+  json_object *error_code_obj = json_object_new_int(error_code);
+  json_object *message_obj = json_object_new_string(message);
+  json_object_object_add(error_object,"code", error_code_obj);
+  json_object_object_add(error_object, "message", message_obj);
+  return error_object;
+};
+
+const char *error_response();
 
 int get() {
   printf("Get.\n");
@@ -133,22 +169,7 @@ json_object *get_request_id(json_object *root_object,
   return identifier;
 }
 
-const char *create_response(json_object *request_id) {
-  /*Create a json object*/
-  json_object * response = json_object_new_object();
-  /*Add the protocol version*/
-  json_object *protversion = json_object_new_string("2.0");
-  json_object_object_add(response,"jsonrpc", protversion);
-  json_object_object_add(response, "id", request_id);
 
-  const char *response_text;
-  response_text = json_object_to_json_string(response);
-  /*Now printing the json object*/
-  printf ("The json object created: %s \n",
-          response_text);
-  return response_text;
-  //json_object_put(response);
-}
 
 const char *handle(const char *method_name,
                    json_object *request_id) {
@@ -172,8 +193,12 @@ const char *handle(const char *method_name,
     reindex();
     break;
   }
+  json_object *data = json_object_new_string("Hello World!");
   const char* response_text;
-  response_text = create_response(request_id);
+  response_text = create_response(request_id,
+                                  data,
+                                  true);
+
   return response_text;
 }
 
@@ -187,8 +212,7 @@ const char *process_buffer(char *buf,
                                            silentnote,
                                            req_id_format);
   const char *response_text = handle(method_name, request_id);
+  // tidy up before return
+  json_object_put(root_object);
   return response_text;
-  // tidy up
-  //json_object_put(root_object);
-  //return 0;
 }
