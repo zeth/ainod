@@ -91,17 +91,19 @@ void child_worker(int worker,
           }
           printf("End length. %d\n", current_length);
 
-          char *response = "{result: OK}\n";
+          /* Buffer processing needs to be moved to after the mutex is
+             released, possibly using epoll to help. */
+          const char *response = process_buffer(buf,
+                                                silentnote,
+                                                req_id_format);
           int response_success = send(cfd,
                                       response,
-                                      13,
+                                      strlen(response),
                                       MSG_DONTWAIT);
           if (response_success == -1) {
             handle_error("Could not send to client socket.");
           }
-          /* Buffer processing needs to be moved to after the mutex is
-             released, possibly using epoll to help. */
-          process_buffer(buf, silentnote, req_id_format);
+
           close(cfd);
           free(buf);
         } else {

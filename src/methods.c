@@ -69,10 +69,11 @@ json_object *get_request_id(json_object *root_object,
   if (answer == true) {
     /* We an have id, (but don't know the type yet) */
     if (strcmp(req_id_format, "default") == 0) {
-      /* we don't care about the type, type testing is for wimps */
+      /* we don't care about the type, type testing is for wimps... */
       return identifier;
     }
-    /* It seems you still do care about the type. */
+    /* ... or perhaps not! It seems you still do care about the
+       type. */
     enum json_type id_type = json_object_get_type(identifier);
     printf("id_type is %d.\n", id_type);
     printf("My format is now %s.\n", req_id_format);
@@ -132,7 +133,7 @@ json_object *get_request_id(json_object *root_object,
   return identifier;
 }
 
-int create_response(json_object *request_id) {
+const char *create_response(json_object *request_id) {
   /*Create a json object*/
   json_object * response = json_object_new_object();
   /*Add the protocol version*/
@@ -140,15 +141,17 @@ int create_response(json_object *request_id) {
   json_object_object_add(response,"jsonrpc", protversion);
   json_object_object_add(response, "id", request_id);
 
+  const char *response_text;
+  response_text = json_object_to_json_string(response);
   /*Now printing the json object*/
   printf ("The json object created: %s \n",
-          json_object_to_json_string(response));
-
-  json_object_put(response);
+          response_text);
+  return response_text;
+  //json_object_put(response);
 }
 
-int handle(const char *method_name,
-           json_object *request_id) {
+const char *handle(const char *method_name,
+                   json_object *request_id) {
   switch(method_name[0]) {
   case 'g': //get
     get();
@@ -169,20 +172,23 @@ int handle(const char *method_name,
     reindex();
     break;
   }
-  create_response(request_id);
+  const char* response_text;
+  response_text = create_response(request_id);
+  return response_text;
 }
 
-int process_buffer(char *buf,
-                   bool silentnote,
-                   char *req_id_format) {
+const char *process_buffer(char *buf,
+                           bool silentnote,
+                           char *req_id_format) {
   json_object *root_object;
   root_object = json_tokener_parse(buf);
   const char *method_name = get_method_name(root_object);
   json_object *request_id = get_request_id(root_object,
                                            silentnote,
                                            req_id_format);
-  handle(method_name, request_id);
+  const char *response_text = handle(method_name, request_id);
+  return response_text;
   // tidy up
-  json_object_put(root_object);
-  return 0;
+  //json_object_put(root_object);
+  //return 0;
 }
