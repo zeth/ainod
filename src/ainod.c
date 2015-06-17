@@ -60,6 +60,11 @@ int parent(void) {
   bool req_req_id = check_boolean_setting(store, "Require-request-id");
   bool remote_schemas = check_boolean_setting(store, "Remote-schemas");
   bool eof_marker = check_boolean_setting(store, "EOF-marker");
+  char *req_id_format = strdup(check_string_setting(store,
+                                                    "Req-id-format",
+                                                    "default"));
+  printf("My format is %s.\n", req_id_format);
+
 
   /* Bin the config information */
   delete_store(store);
@@ -73,7 +78,7 @@ int parent(void) {
   /* Create child worker processes */
   for(i=0;i<number_of_workers;i++){
     if (!fork()) {
-      child_worker(i, mtx, datadir, incoming, silentnote);
+      child_worker(i, mtx, datadir, incoming, silentnote, req_id_format);
     }
   }
   /* Cleanup below */

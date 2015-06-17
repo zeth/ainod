@@ -40,7 +40,8 @@ void child_worker(int worker,
                   pthread_mutex_t *mp,
                   char *datadir,
                   int incoming,
-                  bool silentnote) {
+                  bool silentnote,
+                  char *req_id_format) {
   /** Listen to socket */
 
   if (listen(incoming, BACKLOG) == -1) {
@@ -98,7 +99,9 @@ void child_worker(int worker,
           if (response_success == -1) {
             handle_error("Could not send to client socket.");
           }
-          process_buffer(buf, silentnote);
+          /* Buffer processing needs to be moved to after the mutex is
+             released, possibly using epoll to help. */
+          process_buffer(buf, silentnote, req_id_format);
           close(cfd);
           free(buf);
         } else {

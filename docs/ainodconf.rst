@@ -103,3 +103,15 @@ Takes a boolean argument of true or false. Whether the data ends with
 an End of File marker. If true then the daemon will reject any
 incoming data without the EOF marker; this way it rejects incomplete
 data earlier but reduces compatibility with some third party clients.
+
+Req-id-format
+~~~~~~~~~~~~~
+
+Determines the format of the request id (if present). Available options are:
+
+* default - allows anything in the request id
+* rpc - allows strings, ints, numbers and null but not arrays or objects
+* int - only allows int ids
+* string - only allows string ids
+
+If you have a real use case for another format, let us know.

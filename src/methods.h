@@ -2,6 +2,6 @@
 #define AINOD_METHODS_H
 
 char *get_id(void);
-int process_buffer(char *buf, bool silentnote);
+int process_buffer(char *buf, bool silentnote, char *req_id_format);
 
 #endif /* AINOD_METHODS_H */

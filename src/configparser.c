@@ -277,6 +277,17 @@ int check_workers(struct hsearch_data *store) {
   return processors_int;
 }
 
+/** Check for a string setting, if not set use `default_setting` */
+char *check_string_setting(struct hsearch_data *store,
+                           char *key,
+                           char *default_setting) {
+  char *setting = search_store(store, key);
+  if (!setting) {
+    setting = default_setting;
+  }
+  return setting;
+}
+
 /** Check Datadir setting, if not set use /var/lib/ainod */
 char *check_data_dir(struct hsearch_data *store) {
   char *datadir = search_store(store, "Datadir");

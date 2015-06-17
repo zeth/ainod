@@ -46,5 +46,9 @@ char *check_data_dir(struct hsearch_data *store);
 bool check_boolean_setting(struct hsearch_data *store,
                             char *setting_name);
 
+char *check_string_setting(struct hsearch_data *store,
+                           char *key,
+                           char *default_setting);
+
 #endif // AINOD_CONFIG_PARSER_H_
 
