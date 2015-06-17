@@ -94,32 +94,33 @@ const char *get_method_name(json_object *root_object) {
   return method_name;
 }
 
-json_object *get_request_id(json_object *root_object,
-                            bool silentnote,
-                            char *req_id_format) {
-  json_object *identifier;
+int get_request_id(json_object **identifier,
+                   json_object *root_object,
+                   bool silentnote,
+                   char *req_id_format) {
+  //json_object *identifier;
   json_bool answer;
   // here
   const char *id_string;
-  answer = json_object_object_get_ex(root_object, "id", &identifier);
+  answer = json_object_object_get_ex(root_object, "id", identifier);
   if (answer == true) {
     /* We an have id, (but don't know the type yet) */
     if (strcmp(req_id_format, "default") == 0) {
       /* we don't care about the type, type testing is for wimps... */
-      return identifier;
+      return 0;
     }
     /* ... or perhaps not! It seems you still do care about the
        type. */
-    enum json_type id_type = json_object_get_type(identifier);
+    enum json_type id_type = json_object_get_type(*identifier);
     printf("id_type is %d.\n", id_type);
     printf("My format is now %s.\n", req_id_format);
     if (id_type == json_type_string) {
       if (strcmp(req_id_format, "string") == 0) {
         /* Client wanted a string and got one, Merry Christmas. */
-        return identifier;
+        return 0;
       }
       if (strcmp(req_id_format, "rpc") == 0) {
-        return identifier;
+        return 0;
       }
       /* if we got here then we wanted an int but got a string, throw
          an error back to the client! TODO! */
@@ -128,10 +129,11 @@ json_object *get_request_id(json_object *root_object,
     if (id_type == json_type_int) {
       if (strcmp(req_id_format, "int") == 0) {
         /* Client wanted an int and got one, Merry Christmas. */
-        return identifier;
+        return 0;
       }
       if (strcmp(req_id_format, "rpc") == 0) {
-        return identifier;
+
+        return 0;
       }
       /* if we got here then we wanted a string but got an int, throw
          error to client. */
@@ -139,7 +141,7 @@ json_object *get_request_id(json_object *root_object,
     }
     if (id_type == json_type_double) {
       if (strcmp(req_id_format, "rpc") == 0) {
-        return identifier;
+        return 0;
       }
       /* if we got here then we wanted a string or an int but got a
          number, throw error to client. */
@@ -148,7 +150,7 @@ json_object *get_request_id(json_object *root_object,
     if (id_type == json_type_null) {
       if (strcmp(req_id_format, "rpc") == 0) {
         /* Needs to be more complicated here. */
-        return identifier;
+        return 0;
       }
       /* if we got here then we wanted a string or an int but got a
          null, throw error to client. */
@@ -166,7 +168,7 @@ json_object *get_request_id(json_object *root_object,
     }
 
   }
-  return identifier;
+  return 0;
 }
 
 
@@ -208,10 +210,12 @@ const char *process_buffer(char *buf,
   json_object *root_object;
   root_object = json_tokener_parse(buf);
   const char *method_name = get_method_name(root_object);
-  json_object *request_id = get_request_id(root_object,
-                                           silentnote,
-                                           req_id_format);
-  const char *response_text = handle(method_name, request_id);
+  json_object *identifier;
+  int success = get_request_id(&identifier,
+                               root_object,
+                               silentnote,
+                               req_id_format);
+  const char *response_text = handle(method_name, identifier);
   // tidy up before return
   json_object_put(root_object);
   return response_text;
