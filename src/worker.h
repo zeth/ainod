@@ -7,6 +7,7 @@ void child_worker(int worker,
                   char *datadir,
                   int incoming,
                   bool silentnote,
-                  char *req_id_format);
+                  char *req_id_format,
+                  bool req_req_id);
 
 #endif /* AINOD_WORKER_H */

@@ -41,7 +41,8 @@ void child_worker(int worker,
                   char *datadir,
                   int incoming,
                   bool silentnote,
-                  char *req_id_format) {
+                  char *req_id_format,
+                  bool req_req_id) {
   /** Listen to socket */
 
   if (listen(incoming, BACKLOG) == -1) {
@@ -95,15 +96,21 @@ void child_worker(int worker,
              released, possibly using epoll to help. */
           const char *response = process_buffer(buf,
                                                 silentnote,
-                                                req_id_format);
-          int response_success = send(cfd,
-                                      response,
-                                      strlen(response),
-                                      MSG_DONTWAIT);
-          if (response_success == -1) {
-            handle_error("Could not send to client socket.");
+                                                req_id_format,
+                                                req_req_id);
+          if (response == 0 && silentnote == true) {
+            /* We have a notification, don't send reply */
+            printf("I am a notification");
+          } else {
+            /* We have a normal response */
+            int response_success = send(cfd,
+                                        response,
+                                        strlen(response),
+                                        MSG_DONTWAIT);
+            if (response_success == -1) {
+              handle_error("Could not send to client socket.");
+            }
           }
-
           close(cfd);
           free(buf);
         } else {

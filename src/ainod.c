@@ -78,7 +78,9 @@ int parent(void) {
   /* Create child worker processes */
   for(i=0;i<number_of_workers;i++){
     if (!fork()) {
-      child_worker(i, mtx, datadir, incoming, silentnote, req_id_format);
+      child_worker(i, mtx, datadir,
+                   incoming, silentnote,
+                   req_id_format, req_req_id);
     }
   }
   /* Cleanup below */

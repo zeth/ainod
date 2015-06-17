@@ -96,7 +96,8 @@ const char *get_method_name(json_object *root_object) {
 int get_request_id(json_object **identifier,
                    json_object *root_object,
                    bool silentnote,
-                   char *req_id_format) {
+                   char *req_id_format,
+                   bool req_req_id) {
   //json_object *identifier;
   json_bool answer;
   // here
@@ -147,6 +148,10 @@ int get_request_id(json_object **identifier,
     }
     if (id_type == json_type_null) {
       if (strcmp(req_id_format, "rpc") == 0) {
+        if (silentnote) {
+          /* We have a notification */
+          return AINOD_RPC_SILENT_NOTIFICATION;
+        }
         /* Needs to be more complicated here. */
         return 0;
       }
@@ -160,9 +165,17 @@ int get_request_id(json_object **identifier,
   } else {
     /* No id found */
     if (silentnote) {
-      printf("Must be a notification.");
+      /* We have a notification */
+      return AINOD_RPC_SILENT_NOTIFICATION;
     } else {
-      printf("Missing id altogether.");
+      if (req_req_id) {
+        /* Id is required but not present */
+        return JSON_SCHEMA_ERROR_INVALID_REQUEST;
+      }
+      /* No request id at all but it is not required in this case. So
+         lets set it to 0.*/
+      *identifier = json_object_new_int(0);
+      return 0;
     }
 
   }
@@ -170,7 +183,8 @@ int get_request_id(json_object **identifier,
 }
 
 const char *handle(const char *method_name,
-                   json_object *request_id) {
+                   json_object *request_id,
+                   bool silent) {
   switch(method_name[0]) {
   case 'g': //get
     get();
@@ -191,18 +205,21 @@ const char *handle(const char *method_name,
     reindex();
     break;
   }
+  if (silent) {
+    return "";
+  }
   json_object *data = json_object_new_string("Hello World!");
   const char* response_text;
   response_text = create_response(request_id,
                                   data,
                                   true);
-
   return response_text;
 }
 
 const char *process_buffer(char *buf,
                            bool silentnote,
-                           char *req_id_format) {
+                           char *req_id_format,
+                           bool req_req_id) {
   json_object *root_object;
   const char *response_text;
   root_object = json_tokener_parse(buf);
@@ -211,11 +228,14 @@ const char *process_buffer(char *buf,
   int success = get_request_id(&identifier,
                                root_object,
                                silentnote,
-                               req_id_format);
+                               req_id_format,
+                               req_req_id);
   if (success == 0) {
-    response_text = handle(method_name, identifier);
-  } else if (success = JSON_SCHEMA_ERROR_INVALID_REQUEST) {
-    printf("Right place\n");
+    response_text = handle(method_name, identifier, false);
+  } else if (success == AINOD_RPC_SILENT_NOTIFICATION) {
+    response_text = "";
+    handle(method_name, identifier, true);
+  } else if (success == JSON_SCHEMA_ERROR_INVALID_REQUEST) {
     json_object * error_object = json_object_new_object();
     init_error_object(&error_object,
                       identifier,
