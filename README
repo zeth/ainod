@@ -17,15 +17,19 @@ To compile the binary, you need the development headers for json-c and
 systemd. On Debian, Ubuntu and similar .deb based distributions, you
 can use this command:
 
-sudo apt-get install libjson-c-dev libsystemd-dev
+sudo apt-get install libjson-c-dev libsystemd-dev uuid-dev
+
+You will also need a C build environment which you can install using:
+
+sudo apt-get install build-essential autoconf
 
 On Fedora or similar .rpm based distributions, you can use:
 
-dnf install json-c-devel systemd-devel
+dnf install json-c-devel systemd-devel uuid-devel
 
 or if you are old school:
 
-yum install json-c-devel systemd-devel
+yum install json-c-devel systemd-devel uuid-devel
 
 Installation
 ------------
