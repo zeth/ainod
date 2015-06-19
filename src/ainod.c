@@ -63,9 +63,6 @@ int parent(void) {
   char *req_id_format = strdup(check_string_setting(store,
                                                     "Req-id-format",
                                                     "default"));
-  printf("My format is %s.\n", req_id_format);
-
-
   /* Bin the config information */
   delete_store(store);
 

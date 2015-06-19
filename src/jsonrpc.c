@@ -78,8 +78,6 @@ int get_request_id(json_object **identifier,
     /* ... or perhaps not! It seems you still do care about the
        type. */
     enum json_type id_type = json_object_get_type(*identifier);
-    printf("id_type is %d.\n", id_type);
-    printf("My format is now %s.\n", req_id_format);
     if (id_type == json_type_string) {
       if (strcmp(req_id_format, "string") == 0) {
         /* Client wanted a string and got one, Merry Christmas. */

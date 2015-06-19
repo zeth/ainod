@@ -67,34 +67,48 @@ void child_worker(int worker,
   events = calloc (MAXEVENTS, sizeof event);
   while (1) {
     int number_of_events = epoll_wait (epoll_fd, events, MAXEVENTS, -1);
-    /* printf("CHILD %d, try to get mutex\n", worker); */
+    /* Try to get the mutex */
     int first = lock_mutex(mp);
     if (first == 0) {
-      /* printf("CHILD %d, I won the mutex! %d events \n", worker, number_of_events); */
+      /* We won the mutex!  */
+      /* Make arrays to hold the connections and the character buffers */
+      int connection[number_of_events];
+      char *buffer_array[number_of_events];
       int i;
       for (i = 0; i < number_of_events; i++) {
         /* What to do here now ? */
         if (events[i].events & EPOLLIN) {
-          /* Connection file descriptor */
-          int cfd;
           /* Accept the connection */
-          cfd = accept(events[i].data.fd, NULL, NULL);
-          if (cfd == -1) {
-            handle_error("Error in accepting connection");
+          connection[i] = accept(events[i].data.fd, NULL, NULL);
+          if (connection[i] == -1) {
+            handle_error("Error in accepting connection.");
           }
-          char *buf = malloc(PAGE_SIZE);
-          ssize_t length_read = read(cfd, buf, PAGE_SIZE);
+          if ((buffer_array[i] = malloc(PAGE_SIZE)) == NULL) {
+            handle_error("Error in allocating memory.");
+          }
+          ssize_t length_read = read(connection[i], buffer_array[i], PAGE_SIZE);
           int current_length = PAGE_SIZE;
           while (length_read == PAGE_SIZE) {
-            buf = realloc(buf, current_length + PAGE_SIZE);
-            length_read = long_read(&cfd, buf, current_length);
+            buffer_array[i] = realloc(buffer_array[i], current_length + PAGE_SIZE);
+            length_read = long_read(&connection[i], buffer_array[i], current_length);
             current_length += PAGE_SIZE;
           }
           printf("End length. %d\n", current_length);
 
-          /* Buffer processing needs to be moved to after the mutex is
-             released, possibly using epoll to help. */
-          const char *response = process_buffer(buf,
+
+
+        } else {
+          printf("Some other kind of event.");
+        }
+      }
+      /** Hand back the Mutex to let the other workers take incoming connections. */
+      int second = unlock_mutex(mp);
+
+      /** We had read all the data from the incoming socket, now process it */
+      /** Possibly want to hand this back to epoll */
+      for (i = 0; i < number_of_events; i++) {
+        printf("We have got %s.\n", buffer_array[i]);
+          const char *response = process_buffer(buffer_array[i],
                                                 silentnote,
                                                 req_id_format,
                                                 req_req_id);
@@ -103,7 +117,7 @@ void child_worker(int worker,
             printf("I am a notification");
           } else {
             /* We have a normal response */
-            int response_success = send(cfd,
+            int response_success = send(connection[i],
                                         response,
                                         strlen(response),
                                         MSG_DONTWAIT);
@@ -111,16 +125,13 @@ void child_worker(int worker,
               handle_error("Could not send to client socket.");
             }
           }
-          close(cfd);
-          free(buf);
-        } else {
-          printf("Some other kind of event.");
-        }
+          free(buffer_array[i]);
+          close(connection[i]);
       }
-      int second = unlock_mutex(mp);
     } else {
       /** printf("CHILD %d, I lost the mutex!\n", worker, first); */
     }
+
   }
 
   close(epoll_fd);
