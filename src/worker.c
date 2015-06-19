@@ -15,11 +15,7 @@
 #include "worker.h"
 #include "mutex.h"
 #include "jsonrpc.h"
-
-#define BACKLOG 10
-#define MAX_EPOLL_FD 4096
-#define MAXEVENTS 64
-#define PAGE_SIZE 4096
+#include "constants.h"
 
 int long_read(int *cfd, char *buf, int current_length) {
   ssize_t length_read = recv(*cfd,
@@ -93,8 +89,9 @@ void child_worker(int worker,
             length_read = long_read(&connection[i], buffer_array[i], current_length);
             current_length += PAGE_SIZE;
           }
-          printf("End length. %d\n", current_length);
-
+          if (DEBUG == true) {
+            printf("End length. %d\n", current_length);
+          }
 
 
         } else {
@@ -107,7 +104,9 @@ void child_worker(int worker,
       /** We had read all the data from the incoming socket, now process it */
       /** Possibly want to hand this back to epoll */
       for (i = 0; i < number_of_events; i++) {
-        printf("We have got %s.\n", buffer_array[i]);
+        if (DEBUG == true) {
+          printf("We have got %s.\n", buffer_array[i]);
+        }
           const char *response = process_buffer(buffer_array[i],
                                                 silentnote,
                                                 req_id_format,
