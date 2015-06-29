@@ -63,6 +63,8 @@ int parent(void) {
   char *req_id_format = strdup(check_string_setting(store,
                                                     "Req-id-format",
                                                     "default"));
+  int path_format = check_int_setting(store,
+                                      "Path-format");
   /* Bin the config information */
   delete_store(store);
 
@@ -77,7 +79,8 @@ int parent(void) {
     if (!fork()) {
       child_worker(i, mtx, datadir,
                    incoming, silentnote,
-                   req_id_format, req_req_id);
+                   req_id_format, req_req_id,
+                   path_format);
     }
   }
   /* Cleanup below */

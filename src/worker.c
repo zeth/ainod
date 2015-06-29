@@ -38,7 +38,8 @@ void child_worker(int worker,
                   int incoming,
                   bool silentnote,
                   char *req_id_format,
-                  bool req_req_id) {
+                  bool req_req_id,
+                  int path_format) {
   /** Listen to socket */
 
   if (listen(incoming, BACKLOG) == -1) {
@@ -110,7 +111,9 @@ void child_worker(int worker,
           const char *response = process_buffer(buffer_array[i],
                                                 silentnote,
                                                 req_id_format,
-                                                req_req_id);
+                                                req_req_id,
+                                                datadir,
+                                                path_format);
           if (response == 0 && silentnote == true) {
             /* We have a notification, don't send reply */
             printf("I am a notification");

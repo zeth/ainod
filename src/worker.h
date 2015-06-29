@@ -12,6 +12,7 @@ void child_worker(int worker,
                   int incoming,
                   bool silentnote,
                   char *req_id_format,
-                  bool req_req_id);
+                  bool req_req_id,
+                  int path_format);
 
 #endif /* AINOD_WORKER_H */

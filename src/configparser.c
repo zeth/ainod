@@ -311,6 +311,17 @@ bool check_boolean_setting(struct hsearch_data *store,
   }
 }
 
+/** Check integer setting, if not defaults to 0 */
+int check_int_setting(struct hsearch_data *store,
+                      char *setting_name) {
+  char *setting = search_store(store, setting_name);
+  if (!setting) {
+    return 0;
+  } else {
+    return strtol(setting, (char **)NULL, 10);
+  }
+}
+
 
 //int main(void) {
 //  struct hsearch_data *store = new_store();

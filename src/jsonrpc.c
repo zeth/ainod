@@ -37,7 +37,6 @@ const char *create_response(json_object *request_id,
 }
 
 int init_error_object(json_object **error_object,
-                      json_object *request_id,
                       int error_code,
                       const char *message) {
   /* Add the error code and message */
@@ -61,6 +60,7 @@ const char *get_method_name(json_object *root_object) {
   }
   return method_name;
 }
+
 
 int get_request_id(json_object **identifier,
                    json_object *root_object,
@@ -151,10 +151,27 @@ int get_request_id(json_object **identifier,
 
 const char *handle(const char *method_name,
                    json_object *request_id,
+                   json_object *root_object,
+                   int path_format,
+                   char *datadir,
                    bool silent) {
+  json_object *params;
+  int error;
+  const char *error_message;
+  const char* response_text;
+  json_object *data;
+  json_bool params_exists;
+  params_exists = json_object_object_get_ex(root_object, "params", &params);
+  if (params_exists == true) {
+    printf("Bingo\n");
+  } else {
+    printf("Game over\n");
+  }
+
+  /** Methods need to reply with data and with error code */
   switch(method_name[0]) {
   case 'g': //get
-    get();
+    error = get(params, &data, &error_message, path_format, datadir);
     break;
   case 'c': //Create
     create();
@@ -172,21 +189,38 @@ const char *handle(const char *method_name,
     reindex();
     break;
   }
+
   if (silent) {
+    //free(error_message);
     return "";
   }
-  json_object *data = json_object_new_string("Hello World!");
-  const char* response_text;
-  response_text = create_response(request_id,
-                                  data,
-                                  true);
+
+  if (error == 0) {
+    //data = json_object_new_string("Hello World!");
+    response_text = create_response(request_id,
+                                    data,
+                                    true);
+  } else {
+    printf("error here jim;\n");
+    json_object * error_object = json_object_new_object();
+    init_error_object(&error_object,
+                      error,
+                      error_message);
+    response_text = create_response(request_id,
+                                    error_object,
+                                    false);
+
+  }
+  //  free(error_message);
   return response_text;
 }
 
 const char *process_buffer(char *buf,
                            bool silentnote,
                            char *req_id_format,
-                           bool req_req_id) {
+                           bool req_req_id,
+                           char *datadir,
+                           int path_format) {
   json_object *root_object;
   const char *response_text;
   root_object = json_tokener_parse(buf);
@@ -198,14 +232,20 @@ const char *process_buffer(char *buf,
                                req_id_format,
                                req_req_id);
   if (success == 0) {
-    response_text = handle(method_name, identifier, false);
+    response_text = handle(method_name, identifier,
+                           root_object, path_format,
+                           datadir, false);
+    /* Do param errors have to propegate all the way to here? I don't
+       think so... */
+
   } else if (success == AINOD_RPC_SILENT_NOTIFICATION) {
     response_text = "";
-    handle(method_name, identifier, true);
+    handle(method_name, identifier,
+           root_object, path_format,
+           datadir, true);
   } else if (success == JSON_SCHEMA_ERROR_INVALID_REQUEST) {
     json_object * error_object = json_object_new_object();
     init_error_object(&error_object,
-                      identifier,
                       JSON_SCHEMA_ERROR_INVALID_REQUEST,
                       AINOD_INVALID_REQ_ID);
     response_text = create_response(identifier,

@@ -115,3 +115,16 @@ Determines the format of the request id (if present). Available options are:
 * string - only allows string ids
 
 If you have a real use case for another format, let us know.
+
+Path-format
+~~~~~~~~~~~
+
+Affects how data is organised and stored.
+
+* 0 - Traditional layout: /store/schema/id/
+* 1 - Open collection layout: /store/collection/id/
+* 2 - Collection of mixed schema layout: /store/id/schema/
+
+Warning: Changing the Path-format while there is data in Ainod
+requires writing your own script for moving the data into the new
+format.
