@@ -33,11 +33,11 @@ int get_string(json_object *params,
 }
 
 
-int process_filter(json_object **filter,
-                   char **path,
-                   int path_format,
-                   const char **error_message,
-                   char **datadir) {
+int get_path_from_filter(json_object **filter,
+                         char **path,
+                         int path_format,
+                         const char **error_message,
+                         char **datadir) {
 
   const char *schema;
   const char *ref;
@@ -114,12 +114,14 @@ int get(json_object *params,
   json_bool filter_exists = json_object_object_get_ex(params, "filter", &filter_object);
   if (filter_exists == true) {
     printf("Found a filter.\n");
-    int fsuccess = process_filter(&filter_object, &path, path_format, error_message, &datadir);
+    int fsuccess = get_path_from_filter(&filter_object, &path, path_format, error_message, &datadir);
   } else {
     printf("No filter found\n");
   }
 
   *data = json_object_from_file(path);
+  /** Note to support multiple results, we will need to stream back the documents */
+
   free(path);
   return 0;
 }
