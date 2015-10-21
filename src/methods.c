@@ -44,8 +44,7 @@ int get_path_from_filter(json_object **filter,
   const char *store;
   const char *id;
   const char *collection;
-
-  printf("Lets process the filter.\n");
+  const char *tail = "/current.json";
 
   /* Check for schema */
   json_bool schema_exists = get_string(*filter, "schema", &schema);
@@ -57,10 +56,8 @@ int get_path_from_filter(json_object **filter,
   json_bool ref_exists = get_string(*filter, "ref", &ref);
 
   if (ref_exists == true) {
-    *path = strdup(ref);
-    printf("Found the %s path.\n", path);
+    asprintf(path, "%s/%s%s", *datadir, ref, tail);
   } else {
-    printf("No easy ref, continuing.\n");
     /* get store */
     json_bool store_exists = get_string(*filter, "store", &store);
     if (store_exists == true) {
@@ -82,7 +79,6 @@ int get_path_from_filter(json_object **filter,
     }
 
     /* Now assemble the path */
-    const char *tail = "/current.json";
     switch(path_format) {
     case 0:
       asprintf(path, "%s/%s/%s/%s%s", *datadir, store, schema, id, tail);
@@ -113,7 +109,6 @@ int get(json_object *params,
   /* get filter */
   json_bool filter_exists = json_object_object_get_ex(params, "filter", &filter_object);
   if (filter_exists == true) {
-    printf("Found a filter.\n");
     int fsuccess = get_path_from_filter(&filter_object, &path, path_format, error_message, &datadir);
   } else {
     printf("No filter found\n");
