@@ -37,14 +37,14 @@ int get_path_from_filter(json_object **filter,
                          char **path,
                          int path_format,
                          const char **error_message,
-                         char **datadir) {
+                         char **datadir,
+                         int create) {
 
   const char *schema;
   const char *ref;
   const char *store;
   const char *id;
   const char *collection;
-  const char *tail = "/current.json";
 
   /* Check for schema */
   json_bool schema_exists = get_string(*filter, "schema", &schema);
@@ -56,7 +56,7 @@ int get_path_from_filter(json_object **filter,
   json_bool ref_exists = get_string(*filter, "ref", &ref);
 
   if (ref_exists == true) {
-    asprintf(path, "%s/%s%s", *datadir, ref, tail);
+    asprintf(path, "%s/%s", *datadir, ref);
   } else {
 
     /* get store */
@@ -82,21 +82,29 @@ int get_path_from_filter(json_object **filter,
     json_bool id_exists = get_string(*filter, "id", &id);
     if (id_exists == true) {
       printf("Found the %s id.\n", id);
+    } else {
+      if (create == 1) {
+        printf("Create ID\n");
+        id = get_id();
+        printf("We made %s\n", id);
+      } else {
+        printf("This is the end of the road, megatron");
+          /** Handle this somehow */
+      }
     }
-
 
     /* Now assemble the path */
     switch(path_format) {
     case 0:
-      asprintf(path, "%s/%s/%s/%s%s", *datadir, store, schema, id, tail);
+      asprintf(path, "%s/%s/%s/%s", *datadir, store, schema, id);
       break;
 
     case 1:
-      asprintf(path, "%s/%s/%s/%s%s", *datadir, store, collection, id, tail);
+      asprintf(path, "%s/%s/%s/%s", *datadir, store, collection, id);
       break;
 
     case 2:
-      asprintf(path, "%s/%s/%s/%s%s", *datadir, store, id, schema, tail);
+      asprintf(path, "%s/%s/%s/%s", *datadir, store, id, schema);
       break;
     }
   }
@@ -117,7 +125,7 @@ int get(json_object *params,
   /* get filter */
   json_bool filter_exists = json_object_object_get_ex(params, "filter", &filter_object);
   if (filter_exists == true) {
-    fsuccess = get_path_from_filter(&filter_object, &path, path_format, error_message, &datadir);
+    fsuccess = get_path_from_filter(&filter_object, &path, path_format, error_message, &datadir, 0);
   } else {
     printf("No filter found\n");
   }
@@ -126,7 +134,11 @@ int get(json_object *params,
     return fsuccess;
   }
 
-  *data = json_object_from_file(path);
+  char *current;
+  const char *tail = "/current.json";
+  asprintf(&current, "%s%s", path, tail);
+
+  *data = json_object_from_file(current);
   /** Note to support multiple results, we will need to stream back the documents */
 
   free(path);
@@ -139,6 +151,26 @@ int create(json_object *params,
            int path_format,
            char *datadir) {
   printf("Create.\n");
+
+  char *path;
+  json_object *filter_object;
+  int fsuccess;
+
+  json_bool filter_exists = json_object_object_get_ex(params, "filter", &filter_object);
+  if (filter_exists == true) {
+    fsuccess = get_path_from_filter(&filter_object, &path, path_format, error_message, &datadir, 1);
+  } else {
+    printf("No filter found\n");
+  }
+
+  if (fsuccess != 0) {
+    return fsuccess;
+  }
+
+  printf("We got this path %s\n", path);
+
+  free(path);
+  return 0;
 }
 
 int delete() {
