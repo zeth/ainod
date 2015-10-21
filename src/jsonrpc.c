@@ -174,7 +174,7 @@ const char *handle(const char *method_name,
     error = get(params, &data, &error_message, path_format, datadir);
     break;
   case 'c': //Create
-    create();
+    error = create(params, &data, &error_message, path_format, datadir);
     break;
   case 'd': //Delete
     delete();

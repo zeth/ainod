@@ -58,15 +58,16 @@ int get_path_from_filter(json_object **filter,
   if (ref_exists == true) {
     asprintf(path, "%s/%s%s", *datadir, ref, tail);
   } else {
+
     /* get store */
     json_bool store_exists = get_string(*filter, "store", &store);
     if (store_exists == true) {
       printf("Found the %s store.\n", store);
+    } else {
+      *error_message = AINOD_MISSING_STORE;
+      return JSON_SCHEMA_ERROR_INVALID_PARAMS;
     }
-    json_bool id_exists = get_string(*filter, "id", &id);
-    if (id_exists == true) {
-      printf("Found the %s id.\n", id);
-    }
+
     /* Get collection if needed */
     if (path_format == 1) {
       json_bool collection_exists = get_string(*filter, "collection", &collection);
@@ -77,6 +78,12 @@ int get_path_from_filter(json_object **filter,
         return JSON_SCHEMA_ERROR_INVALID_PARAMS;
       }
     }
+
+    json_bool id_exists = get_string(*filter, "id", &id);
+    if (id_exists == true) {
+      printf("Found the %s id.\n", id);
+    }
+
 
     /* Now assemble the path */
     switch(path_format) {
@@ -105,13 +112,18 @@ int get(json_object *params,
 
   char *path;
   json_object *filter_object;
+  int fsuccess;
 
   /* get filter */
   json_bool filter_exists = json_object_object_get_ex(params, "filter", &filter_object);
   if (filter_exists == true) {
-    int fsuccess = get_path_from_filter(&filter_object, &path, path_format, error_message, &datadir);
+    fsuccess = get_path_from_filter(&filter_object, &path, path_format, error_message, &datadir);
   } else {
     printf("No filter found\n");
+  }
+
+  if (fsuccess != 0) {
+    return fsuccess;
   }
 
   *data = json_object_from_file(path);
@@ -121,7 +133,11 @@ int get(json_object *params,
   return 0;
 }
 
-int create() {
+int create(json_object *params,
+           json_object **data,
+           const char **error_message,
+           int path_format,
+           char *datadir) {
   printf("Create.\n");
 }
 
