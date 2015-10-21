@@ -178,7 +178,7 @@ char *parse_line(char *line) {
   }
   /** Now we are down to standard config lines, lets check we have an
       equals sign. */
-  int equals = strchr(line, '=');
+  char *equals = strchr(line, '=');
   if (!equals) {
     handle_error("Missing '='. in config file declaration. Line reads: %s",
                  line);
