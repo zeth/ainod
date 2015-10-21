@@ -116,6 +116,8 @@ Determines the format of the request id (if present). Available options are:
 
 If you have a real use case for another format, let us know.
 
+.. _path-format:
+
 Path-format
 ~~~~~~~~~~~
 

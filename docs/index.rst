@@ -9,7 +9,11 @@ Welcome to Ainod's documentation!
 Contents:
 
 .. toctree::
-   :maxdepth: 2
+    :maxdepth: 2
+
+    methods
+    ainod.conf (Man Page) <ainodconf>
+
 
 
 
