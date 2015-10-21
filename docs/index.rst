@@ -12,6 +12,7 @@ Contents:
     :maxdepth: 2
 
     methods
+    Filter objects <filter>
     ainod.conf (Man Page) <ainodconf>
 
 
