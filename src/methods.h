@@ -23,6 +23,8 @@ int replace(void);
 
 int reindex(void);
 
+int save(void);
+
 #define AINOD_MISSING_COLLECTION "Missing collection parameter"\
   " (as required when the Path-format setting is set to 1)."
 

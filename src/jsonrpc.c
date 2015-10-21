@@ -188,6 +188,9 @@ const char *handle(const char *method_name,
   case 'i': //Index
     reindex();
     break;
+  case 's': //Save
+    save();
+    break;
   }
 
   if (silent) {

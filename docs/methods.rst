@@ -15,6 +15,15 @@ Gets a document or documents.
 
 :Parameters: * *filter*: A query that matches the document(s) to get
 
+save
+----
+
+Saves a document or document. Acts the same as the most relevant
+method (e.g. create or replace).
+
+:Parameters: * *document*: The document(s) to insert
+             * *filter*: A query that matches the document(s) to save
+
 
 create
 ------

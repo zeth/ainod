@@ -173,6 +173,10 @@ int create(json_object *params,
   return 0;
 }
 
+int save() {
+  printf("Save.\n");
+}
+
 int delete() {
   printf("Delete.\n");
 }
