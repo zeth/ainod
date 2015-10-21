@@ -7,9 +7,11 @@ from simpleclient import send_data_to_socket
 EXAMPLE = {
     "method": "get",
     "params": {
-        'store': 'catalog',
-        'schema': 'product',
-        'id': '704e418e-682d-4ade-99be-710f2208102e'
+        "filter": {
+            'store': 'catalog',
+            'schema': 'product',
+            'id': '704e418e-682d-4ade-99be-710f2208102e'
+        }
     }
 }
 
