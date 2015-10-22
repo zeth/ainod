@@ -25,12 +25,5 @@ int reindex(void);
 
 int save(void);
 
-#define AINOD_MISSING_COLLECTION "Missing collection parameter"\
-  " (as required when the Path-format setting is set to 1)."
-
-#define AINOD_MISSING_STORE "Missing store parameter"\
-  " (as required when the Path-format setting is set to 0 or 2)."
-
-
 
 #endif /* AINOD_METHODS_H */
