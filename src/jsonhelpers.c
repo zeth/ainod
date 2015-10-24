@@ -24,7 +24,10 @@ int get_string(struct json_object *params,
 }
 
 
-/** Integrate this bit into the below */
+/** TODO Integrate this bit into the below,
+especially get rid of JSON-C own specific
+error handling.
+*/
 struct json_object* json_object_from_fd(int fd)
 {
   struct printbuf *pb;
@@ -66,6 +69,8 @@ int get_object_from_filename(char *filename,
   }
 
   *data = json_object_from_fd(fd);
+
+
   close(fd);
   return 0;
 }

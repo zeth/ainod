@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <unistd.h>
+#include <errno.h>
+#include <string.h>
 
 #include <uuid/uuid.h>
 #include <json-c/json.h>
@@ -96,5 +98,38 @@ int get_path_from_filter(json_object **filter,
     }
   }
 
+  /** Avoid path traversal, keep data within data dir. */
+  char *absolute_path;
+  absolute_path = malloc(BUFSIZ);
+  char *existing_path = realpath(*path, absolute_path);
+  printf("AOur full path is %s.\n", absolute_path);
+
+  if (existing_path == NULL) {
+    if (errno == ENOENT) {
+      printf("Path does not exist yet %d\n", errno);
+    } else {
+      int errsv = errno;
+      char *message_buffer;
+      message_buffer = malloc(BUFSIZ);
+      if (message_buffer == NULL) {
+        /** Out of memory, end the program */
+      }
+      *error_message = strerror_r(errsv, message_buffer, BUFSIZ);
+      printf("Something else happened. %s\n", message_buffer);
+      return errsv;
+    }
+  }
+  printf("Datadir is %s\n", *datadir);
+  /* Now we check that path beings with datadir */
+  int check = strncmp(absolute_path, *datadir, strlen(*datadir));
+  if (check != 0) {
+    *error_message = "Path traversal error.";
+    return JSON_SCHEMA_ERROR_INVALID_PARAMS;
+  }
+  /* TODO: Hand on the absolute path rather than raw */
+  /* rewrite above slightly */
+
+
+  free(absolute_path);
   return 0;
 }

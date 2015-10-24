@@ -25,6 +25,7 @@
 #include <pthread.h>
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>
 #include <sys/wait.h>
 #include "configparser.h"
 #include "asocket.h"
@@ -54,7 +55,6 @@ int parent(void) {
 
   /* Get out the relevant settings */
   int number_of_workers = check_workers(store);
-  char *datadir = strdup(check_data_dir(store));
   bool silentnote = check_boolean_setting(store, "Silent-notifications");
   bool req_prot = check_boolean_setting(store, "Require-protocol-version");
   bool req_req_id = check_boolean_setting(store, "Require-request-id");
@@ -65,6 +65,18 @@ int parent(void) {
                                                     "default"));
   int path_format = check_int_setting(store,
                                       "Path-format");
+
+  char *raw_datadir = strdup(check_data_dir(store));
+  errno = 0;
+  char *datadir = canonicalize_file_name(raw_datadir);
+  if (errno == ENOENT) {
+      printf("Error: Datadir path does not exist yet, you must create it first.\n");
+      free(datadir);
+      exit(EXIT_FAILURE);
+  }
+
+  /* Bin raw version of datadir path */
+  free(raw_datadir);
   /* Bin the config information */
   delete_store(store);
 
@@ -93,6 +105,7 @@ int parent(void) {
   /* Bin the config information */
   //delete_store(store);
   free(datadir);
+
   /* Bin the mutex */
   delete_mutex(mtx);
 }

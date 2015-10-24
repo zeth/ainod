@@ -11,7 +11,7 @@
 #include "jsonhelpers.h"
 #include "filter.h"
 
-
+/** Note to support multiple results, we will need to stream back the documents */
 int get(json_object *params,
         json_object **data,
         const char **error_message,
@@ -46,7 +46,6 @@ int get(json_object *params,
   if (gsuccess != 0) {
     return gsuccess;
   }
-  /** Note to support multiple results, we will need to stream back the documents */
 
   free(path);
   return 0;
@@ -75,6 +74,8 @@ int create(json_object *params,
   }
 
   printf("We got this path %s\n", path);
+
+  /** Now look at filesstuff.c */
 
   free(path);
   return 0;
