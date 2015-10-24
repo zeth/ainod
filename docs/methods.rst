@@ -21,6 +21,8 @@ save
 Saves a document or document. Acts the same as the most relevant
 method (e.g. create or replace).
 
+Useful when you don't want to be bothered too much.
+
 :Parameters: * *document*: The document(s) to insert
              * *filter*: A query that matches the document(s) to save
 
@@ -32,7 +34,8 @@ Creates a document or documents.
 
 :Parameters: * *document*: The document(s) to insert
              * *filter*: A query that matches the document(s) to create
-   
+
+If the document already exits, DuplicateKeyError.
 
 delete
 ------
@@ -40,6 +43,10 @@ delete
 Deletes a document or documents.
 
 :Parameters: * *filter*: A query that matches the document(s) to delete
+
+Returns the number (quantity) of deleted documents.
+
+If the document already exists then no error but returns 0.
 
 update
 ------
@@ -65,3 +72,10 @@ reindex
 Reindexes a document or documents.
 
 :Parameters: * *filter*: A query that matches the document(s) to index/reindex
+
+count
+-----
+
+Counts a number of documents that match a filter
+
+:Parameters: * *filter*: A query that matches the document(s) to count
