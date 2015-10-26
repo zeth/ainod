@@ -11,8 +11,9 @@ AC_CONFIG_HEADERS([config.h])
 AC_PROG_CC
 AC_PROG_CC_C99
 AC_PROG_INSTALL
+AC_PROG_RANLIB
 
-AM_INIT_AUTOMAKE([-Wall -Werror])
+AM_INIT_AUTOMAKE([subdir-objects serial-tests -Wall -Werror -Wno-portability])
 # Checks for libraries.
 AC_CHECK_LIB(pthread, pthread_attr_init)
 AC_CHECK_LIB([systemd], [sd_listen_fds])
@@ -35,6 +36,23 @@ AC_CHECK_FUNCS([ftruncate memset socket strchr strcspn strdup strerror strndup s
 AC_CONFIG_FILES([
  Makefile
  src/Makefile
+ test/Makefile
 ])
-# AC_CONFIG_FILES([Makefile])
+
+# Check for optional dependencies
+AC_ARG_ENABLE([tests],
+        AS_HELP_STRING([--enable-tests], [Enable unit tests]))
+
+AS_IF([test "x$enable_tests" = "xyes"], [
+  # Do the stuff needed for enabling the feature
+  AC_MSG_NOTICE([Tests have been enabled!!!!!!!!!!])
+  PKG_CHECK_EXISTS([novaprova],
+          [
+        AC_MSG_NOTICE([Found novaprova])
+        PKG_CHECK_MODULES(NOVAPROVA, novaprova)
+        ],
+        [AC_MSG_NOTICE([Did not find novaprova])])
+])
+AM_CONDITIONAL([TESTS_ENABLED], [test "x$enable_tests" = "xyes"])
+
 AC_OUTPUT

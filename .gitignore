@@ -20,4 +20,6 @@ stamp-h1
 ainod
 *.pyc
 docs/_build
+test/testrunner
+*.a
 

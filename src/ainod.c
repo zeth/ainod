@@ -112,6 +112,7 @@ int parent(void) {
 
 
 int main(){
-  parent();
   printf("Hello World.\n");
+  parent();
+  printf("Goodbye Cruel World.\n");
 }
