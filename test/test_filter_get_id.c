@@ -16,11 +16,14 @@
 
 #include <np.h>	    /* NovaProva library */
 #include <string.h>
+#include <stdlib.h>
+
 #include "../src/filter.h" /* declares the Code Under Test */
 
 static void test_get_id(void)
 {
   char *newid = get_id();
-  NP_ASSERT_EQUAL(strlen(newid), 32);
+  int newid_length = strlen(newid);
   free(newid);
+  NP_ASSERT_EQUAL(newid_length, 36);
 }
