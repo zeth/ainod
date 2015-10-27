@@ -19,7 +19,8 @@ TESTS= $(check_PROGRAMS)
 
 # List all your test source code here
 testrunner_SOURCES= test_filter_get_id.c				\
-test_jsonrpc_create_response.c test_jsonrpc_create_response_error.c
+test_jsonrpc_create_response.c test_jsonrpc_create_response_error.c	\
+test_jsonrpc_init_error_object.c
 # Compile only test code with -g and the NovaProva flags
 testrunner_CFLAGS= -g $(NOVAPROVA_CFLAGS)
 # Link testrunner with the Code Under Test and the NovaProva library
