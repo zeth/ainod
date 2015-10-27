@@ -11,7 +11,8 @@ rather than a proprietary binary data format.
 Depepencies
 -----------
 
-Ainod is written in C and targets Linux.
+Ainod is written in C and targets operating systems that have the
+Linux kernel, for other operating systems see below.
 
 To compile the binary, you need the development headers for json-c and
 systemd. On Debian, Ubuntu and similar .deb based distributions, you
@@ -39,4 +40,44 @@ Compile ainod using:
 ./autogen.sh
 ./configure
 make
+
+To install it to the system:
+
 sudo make install
+
+If you don't want to install it systemwide, you can run ainod from
+userspace using:
+
+cd src
+./ainod
+
+Unit Tests
+----------
+
+Unit test support is not built in by default. To run the unit tests,
+you need the NovaProva unit test framework. Instructions for getting
+that are here:
+http://novaprova.readthedocs.org/en/latest/getting-started.html
+
+Once you have it installed, you need to compile ainod with tests
+enabled:
+
+./autogen.sh --enable-tests
+make
+
+The make check command runs the tests:
+
+make check
+
+Other Operating Systems
+-----------------------
+
+Currently ainod makes no attempt at supporting other operating
+systems. Firstly, it is easier to get the overall design first
+without adding until later all the 'if Linux do this, if Windows do
+that' checks.
+
+However, there is nothing really stopping us adding other operating
+systems except time and available test hardware. Support for other
+operating systems may emerge if there is a some corporate sponsorship
+for us to add it or someone in the community wants to add it for us.
