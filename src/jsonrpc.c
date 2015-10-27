@@ -26,14 +26,14 @@ const char *create_response(json_object *request_id,
   }
 
   const char *response_text;
-  response_text = json_object_to_json_string(response);
+  response_text = strdup(json_object_to_json_string(response));
   /*Now printing the json object*/
   if (DEBUG == true) {
     printf ("The json object created: %s \n",
             response_text);
   }
+  json_object_put(response);
   return response_text;
-  //json_object_put(response);
 }
 
 int init_error_object(json_object **error_object,

@@ -20,13 +20,26 @@
 #include <np.h>	    /* NovaProva library */
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <json-c/json.h>
 
-#include "../src/filter.h" /* declares the Code Under Test */
+#include "testheaders.h" /* declares the Code Under Test */
 
-static void test_get_id(void)
+static void test_create_resource(void)
 {
-  char *newid = get_id();
-  int newid_length = strlen(newid);
-  free(newid);
-  NP_ASSERT_EQUAL(newid_length, 36);
+  /* Need to test success (true) and error (success is false)  */
+
+  json_object *data = json_object_new_object();
+
+  json_object *jstring = json_object_new_string("world");
+  json_object_object_add(data,"hello", jstring);
+  json_object *request_id = json_object_new_string("testresponse");
+
+  const char *response = create_response(request_id,
+                                         data,
+                                         true);
+
+  NP_ASSERT_STR_EQUAL(response,
+    "{ \"jsonrpc\": \"2.0\", \"id\": \"testresponse\", \"result\": { \"hello\": \"world\" } }");
+  free((char*) response);
 }
