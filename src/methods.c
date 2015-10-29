@@ -43,11 +43,14 @@ int get(json_object *params,
   int gsuccess = get_object_from_filename(current,
                                           data,
                                           error_message);
+
+  free(path);
+  free(current);
+
   if (gsuccess != 0) {
     return gsuccess;
   }
 
-  free(path);
   return 0;
 }
 

@@ -14,7 +14,7 @@ const char *create_response(json_object *request_id,
                             json_object *data,
                             bool success) {
   /*Create a json object*/
-  json_object * response = json_object_new_object();
+  json_object *response = json_object_new_object();
   /*Add the protocol version*/
   json_object *protversion = json_object_new_string("2.0");
   json_object_object_add(response,"jsonrpc", protversion);

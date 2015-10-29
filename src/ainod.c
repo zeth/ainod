@@ -105,6 +105,7 @@ int parent(void) {
   /* Bin the config information */
   //delete_store(store);
   free(datadir);
+  free(req_id_format);
 
   /* Bin the mutex */
   delete_mutex(mtx);

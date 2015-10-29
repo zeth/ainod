@@ -54,6 +54,7 @@ void child_worker(int worker,
 
   /*Should the event object be on the heap? */
   struct epoll_event event;
+  memset(&event, 0, sizeof(event));
   event.data.fd = incoming;
   event.events = EPOLLIN | EPOLLET;
   if (epoll_ctl (epoll_fd, EPOLL_CTL_ADD, incoming, &event) == -1) {
@@ -83,6 +84,7 @@ void child_worker(int worker,
           if ((buffer_array[i] = malloc(PAGE_SIZE)) == NULL) {
             handle_error("Error in allocating memory.");
           }
+          memset(buffer_array[i], 0, PAGE_SIZE);
           ssize_t length_read = read(connection[i], buffer_array[i], PAGE_SIZE);
           int current_length = PAGE_SIZE;
           while (length_read == PAGE_SIZE) {
@@ -129,6 +131,7 @@ void child_worker(int worker,
           }
           free(buffer_array[i]);
           close(connection[i]);
+          free((char *) response);
       }
     } else {
       /** printf("CHILD %d, I lost the mutex!\n", worker, first); */
