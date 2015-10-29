@@ -37,10 +37,11 @@
 
 
 char *SECTIONS[] = {"Daemon", "Other"};
+int SECTIONS_LENGTH = 2;
 
-int string_is_in_array(char *string, char *array[]) {
+int string_is_in_array(char *string, char *array[], int length) {
   int i = 0;
-  while(array[i]) {
+  while(i < length) {
     if(strcmp(array[i], string) == 0) {
       return 0;
     }
@@ -165,7 +166,7 @@ char *parse_line(char *line) {
       handle_error("Out of memory");
     }
     /** Check is header is in allowed SECTIONS */
-    int result = string_is_in_array(header, SECTIONS);
+    int result = string_is_in_array(header, SECTIONS, SECTIONS_LENGTH);
     if (result==-1) {
       handle_error("Invalid section header %s in config file.",
                    header);
