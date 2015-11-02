@@ -10,7 +10,7 @@ libainod_a_SOURCES= ../src/hfunctions.h ../src/hfunctions.c		\
 ../src/configparser.h ../src/configparser.c ../src/mutex.h		\
 ../src/mutex.c ../src/jsonschema.h ../src/jsonrpc.h ../src/jsonrpc.c	\
 ../src/jsonhelpers.h ../src/jsonhelpers.c ../src/filter.h		\
-../src/filter.c ../src/methods.h ../src/methods.c testheaders.h
+../src/filter.c ../src/methods.h ../src/methods.c
 
 # Tell automake to build the testrunner on "make check"
 check_PROGRAMS= testrunner

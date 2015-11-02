@@ -23,7 +23,10 @@
 #include <stdio.h>
 #include <json-c/json.h>
 
-#include "testheaders.h" /* declares the Code Under Test */
+
+const char *create_response(json_object *request_id,
+                            json_object *data,
+                            bool success);
 
 static void test_create_resource(void)
 {

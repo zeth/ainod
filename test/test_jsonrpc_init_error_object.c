@@ -23,7 +23,9 @@
 #include <stdio.h>
 #include <json-c/json.h>
 
-#include "testheaders.h" /* declares the Code Under Test */
+int init_error_object(json_object **error_object,
+                      int error_code,
+                      const char *message);
 
 static void test_init_error_object(void)
 {
