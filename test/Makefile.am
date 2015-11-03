@@ -22,7 +22,7 @@ testrunner_SOURCES= test_filter_get_id.c				\
 test_jsonrpc_create_response.c test_jsonrpc_create_response_error.c	\
 test_jsonrpc_init_error_object.c					\
 test_configparser_string_is_in_array.c					\
-test_configparser_get_key_value.c
+test_configparser_get_key_value.c test_methods_get_simple.c
 # Compile only test code with -g and the NovaProva flags
 testrunner_CFLAGS= -g $(NOVAPROVA_CFLAGS)
 # Link testrunner with the Code Under Test and the NovaProva library
