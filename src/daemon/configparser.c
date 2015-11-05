@@ -32,7 +32,7 @@
 #include <search.h>
 #include <stdbool.h>
 #include "configparser.h"
-#include "handleerror.h"
+#include "../handleerror.h"
 
 char *SECTIONS[] = {"Daemon", "Other"};
 int SECTIONS_LENGTH = 2;

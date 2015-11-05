@@ -19,7 +19,7 @@
 
 /* Mutex support for ainod. */
 #include <pthread.h>
-#include "handleerror.h"
+#include "../handleerror.h"
 #include "mutex.h"
 
 #include <stdio.h>

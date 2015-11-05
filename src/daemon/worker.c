@@ -33,10 +33,10 @@
 #include <sys/socket.h>
 #include <sys/epoll.h>
 
-#include "handleerror.h"
+#include "../handleerror.h"
 #include "worker.h"
 #include "mutex.h"
-#include "jsonrpc.h"
+#include "../jsonrpc.h"
 
 volatile int keep_running;
 

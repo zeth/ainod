@@ -17,15 +17,9 @@
   along with ainod; If not, see <http://www.gnu.org/licenses/>.
 ***/
 
-#define _GNU_SOURCE
+#ifndef AINOD_PARENT_H
+#define AINOD_PARENT_H
 
-#include <stdlib.h>
-#include <stdio.h>
+int parent(void);
 
-#include "daemon/parent.h"
-
-int main(){
-  printf("Hello World.\n");
-  parent();
-  printf("Goodbye Cruel World.\n");
-}
+#endif /* AINOD_PARENT_H */
