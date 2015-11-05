@@ -37,7 +37,6 @@
 #include "worker.h"
 #include "mutex.h"
 #include "jsonrpc.h"
-#include "constants.h"
 
 volatile int keep_running;
 
@@ -143,9 +142,6 @@ void child_worker(int worker,
             length_read = long_read(&connection[i], buffer_array[i], current_length);
             current_length += PAGE_SIZE;
           }
-          if (DEBUG == true) {
-            printf("End length. %d\n", current_length);
-          }
 
 
         } else {
@@ -158,9 +154,6 @@ void child_worker(int worker,
       /** We had read all the data from the incoming socket, now process it */
       /** Possibly want to hand this back to epoll */
       for (i = 0; i < number_of_events; i++) {
-        if (DEBUG == true) {
-          printf("We have got %s.\n", buffer_array[i]);
-        }
           const char *response = process_buffer(buffer_array[i],
                                                 silentnote,
                                                 req_id_format,
