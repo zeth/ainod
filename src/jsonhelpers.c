@@ -65,6 +65,7 @@ int get_object_from_filename(char *filename,
       /** Out of memory, end the program */
     }
     *error_message = strerror_r(errno, message_buffer, BUFSIZ);
+    free(message_buffer);
     return errno;
   }
 
