@@ -1,3 +1,24 @@
+/***
+  This file is part of ainod.
+
+  Copyright 2015 Zeth
+
+  ainod is free software; you can redistribute it and/or modify it
+  under the terms of the GNU Lesser General Public License as published by
+  the Free Software Foundation; either version 2.1 of the License, or
+  (at your option) any later version.
+
+  ainod is distributed in the hope that it will be useful, but
+  WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public License
+  along with ainod; If not, see <http://www.gnu.org/licenses/>.
+***/
+
+#define _GNU_SOURCE
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <pthread.h>
@@ -7,6 +28,7 @@
 #include <fcntl.h>
 #include <string.h>
 #include <stdbool.h>
+#include <signal.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/epoll.h>
@@ -16,6 +38,25 @@
 #include "mutex.h"
 #include "jsonrpc.h"
 #include "constants.h"
+
+volatile int keep_running;
+
+void sig_term_child_handler(int signo)
+{
+  if (signo == SIGTERM)
+    keep_running = 0;
+    printf("child received SIGTERM\n");
+  //exit(0);
+}
+
+void sig_child_handler(int signo)
+{
+  if (signo == SIGINT)
+    keep_running = 0;
+    printf("child received SIGINT\n");
+  //exit(0);
+}
+
 
 int long_read(int *cfd, char *buf, int current_length) {
   ssize_t length_read = recv(*cfd,
@@ -63,7 +104,17 @@ void child_worker(int worker,
 
   struct epoll_event *events;
   events = calloc (MAXEVENTS, sizeof event);
-  while (1) {
+
+  keep_running = 1;
+  if (signal(SIGTERM, sig_term_child_handler) == SIG_ERR) {
+    printf("\ncan't catch SIGTERM\n");
+  }
+  if (signal(SIGINT, sig_child_handler) == SIG_ERR) {
+    printf("\ncan't catch SIGINT\n");
+  }
+
+
+  while (keep_running) {
     int number_of_events = epoll_wait (epoll_fd, events, MAXEVENTS, -1);
     /* Try to get the mutex */
     int first = lock_mutex(mp);
@@ -143,5 +194,6 @@ void child_worker(int worker,
   free(events);
 
   free(datadir);
+  free(req_id_format);
   exit(0);
 }

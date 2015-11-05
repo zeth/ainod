@@ -37,15 +37,19 @@ void sig_handler(int signo)
 {
   if (signo == SIGINT)
     printf("received SIGINT\n");
-  exit(0);
+  //exit(0);
+}
+
+void sig_term_handler(int signo)
+{
+  if (signo == SIGTERM)
+    printf("received SIGTERM\n");
+  //exit(0);
 }
 
 
 int parent(void) {
   /* Setup signal */
-  if (signal(SIGINT, sig_handler) == SIG_ERR) {
-    printf("\ncan't catch SIGINT\n");
-  }
 
   /* Make a Hash Table for config information. */
   struct hsearch_data *store = new_store();
@@ -86,9 +90,11 @@ int parent(void) {
   /* Get the mutex */
   pthread_mutex_t *mtx = setup_mutex();
   int i;
+  int retval;
   /* Create child worker processes */
   for(i=0;i<number_of_workers;i++){
-    if (!fork()) {
+    retval = fork();
+    if (!retval) {
       child_worker(i, mtx, datadir,
                    incoming, silentnote,
                    req_id_format, req_req_id,
@@ -97,6 +103,18 @@ int parent(void) {
   }
   /* Cleanup below */
 
+  if (retval) {
+    printf("I am the parent\n");
+    if (signal(SIGTERM, sig_term_handler) == SIG_ERR) {
+      printf("\ncan't catch SIGTERM\n");
+    }
+    if (signal(SIGINT, sig_handler) == SIG_ERR) {
+      printf("\ncan't catch SIGINT\n");
+    }
+
+  } else {
+    printf("I am the child\n");
+  }
   /* Make sure children are all finished. */
   for(i=0;i<number_of_workers;i++){
     (void) wait(NULL);
