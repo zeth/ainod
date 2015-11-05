@@ -22,4 +22,4 @@ ainod
 docs/_build
 test/testrunner
 *.a
-
+.dirstamp
