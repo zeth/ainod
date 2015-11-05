@@ -25,7 +25,8 @@ test_configparser_string_is_in_array.c					\
 test_configparser_get_key_value.c test_methods_get_simple.c		\
 test_filter_get_path_from_filter.c					\
 test_filter_get_path_from_filter_pathformat_one.c			\
-test_filter_get_path_from_filter_pathformat_two.c
+test_filter_get_path_from_filter_pathformat_two.c			\
+test_handlerror_handle_error.c
 # Compile only test code with -g and the NovaProva flags
 testrunner_CFLAGS= -g $(NOVAPROVA_CFLAGS)
 # Link testrunner with the Code Under Test and the NovaProva library

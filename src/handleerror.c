@@ -31,17 +31,24 @@
 /** `message` is the error message, with optional format
     arguments. **/
 
+void do_exit() {
+  exit (EXIT_FAILURE);
+};
+
+void do_printf(char *formatted_message) {
+  printf("Error: %s\n", formatted_message);
+};
+
 int handle_error(char *message, ...) {
   // Start by formatting the message with any optional args
   char *formatted_message = NULL;
-
   va_list ap;
   va_start (ap, message);
   vasprintf(&formatted_message, message, ap);
   va_end (ap);
 
-  /** In daemon mode log to the journal */
   if (IS_A_DAEMON) {
+    /** In daemon mode, log to the journal */
     sd_journal_send("MESSAGE=%s", formatted_message,
                     "PRIORITY=5",
                     "HOME=%s", getenv("HOME"),
@@ -51,12 +58,13 @@ int handle_error(char *message, ...) {
                     NULL);
   } else {
     /** In terminal, log to the terminal */
-    printf("Error: %s\n", formatted_message);
+    do_printf(formatted_message);
   }
   free(formatted_message);
-  exit (EXIT_FAILURE);
+  do_exit();
   return 0;
 }
+
 
 //int main(int argc, char *argv[]) {
 //  handle_error("There are %d Monkeys.", 33);
