@@ -4,7 +4,7 @@
 AC_PREREQ([2.69])
 AC_INIT([ainod], [0.1], [theology@gmail.com])
 : ${CFLAGS=-Werror -O0 -g}
-AC_CONFIG_SRCDIR([src/hfunctions.h])
+AC_CONFIG_SRCDIR([src/handleerror.h])
 AC_CONFIG_HEADERS([config.h])
 
 # Checks for programs.
