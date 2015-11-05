@@ -32,12 +32,83 @@
 #include <search.h>
 #include <stdbool.h>
 #include "configparser.h"
-#include "hfunctions.h"
 #include "handleerror.h"
-
 
 char *SECTIONS[] = {"Daemon", "Other"};
 int SECTIONS_LENGTH = 2;
+
+typedef struct _ENTRY
+{
+  unsigned int used;
+  ENTRY entry;
+}
+  _ENTRY;
+
+typedef int (*data_handler) (char *data);
+typedef int (*entry_handler) (ENTRY *entry);
+
+
+/** hiterdata_r goes through all the data values and runs the
+    callback handler on each.
+
+    For example, imagine the data values are all pointers, then one
+    can use this callback as a tidy up function:
+
+    int free_it_all(char *data) {
+      free(data);
+      return 0;
+    }
+
+*/
+int hiter_data_r(struct hsearch_data *htab, data_handler cmb) {
+  int length = htab->size;
+  struct _ENTRY *j;
+  j = htab->table;
+  int i;
+  for (i = 0; i < length; ++i) {
+    struct _ENTRY k;
+    k = j[i];
+    if (k.used) {
+      ENTRY l;
+      l = k.entry;
+      cmb(l.data);
+    }
+  }
+  return 0;
+}
+
+/** hiter_items_r goes through all the keys and values and runs the
+    callback handler on each.
+
+    For example, imagine the key and data values are all pointers,
+    then one can use this callback as a tidy up function:
+
+    int free_it_all(ENTRY *entry) {
+      free(entry->key);
+      free(entry->data);
+    return 0;
+    }
+
+*/
+int hiter_items_r(struct hsearch_data *htab, entry_handler cmb) {
+  int length = htab->size;
+  struct _ENTRY *j;
+  j = htab->table;
+  int i;
+  for (i = 0; i < length; ++i) {
+    struct _ENTRY k;
+    k = j[i];
+    if (k.used) {
+      ENTRY l;
+      l = k.entry;
+      ENTRY *k;
+      k = &l;
+      cmb(k);
+    }
+  }
+  return 0;
+}
+
 
 int string_is_in_array(char *string, char *array[], int length) {
   int i = 0;

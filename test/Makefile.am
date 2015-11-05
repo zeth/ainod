@@ -4,9 +4,8 @@ AM_LDFLAGS=-lsystemd -lrt -luuid -ljson-c
 AM_CFLAGS=-pthread -I/usr/include/json-c
 
 lib_LIBRARIES= libainod.a
-libainod_a_SOURCES= ../src/hfunctions.h ../src/hfunctions.c		\
-../src/handleerror.h ../src/handleerror.c ../src/worker.h		\
-../src/worker.c ../src/asocket.h ../src/asocket.c			\
+libainod_a_SOURCES= ../src/handleerror.h ../src/handleerror.c		\
+../src/worker.h ../src/worker.c ../src/asocket.h ../src/asocket.c	\
 ../src/configparser.h ../src/configparser.c ../src/mutex.h		\
 ../src/mutex.c ../src/jsonschema.h ../src/jsonrpc.h ../src/jsonrpc.c	\
 ../src/jsonhelpers.h ../src/jsonhelpers.c ../src/filter.h		\
