@@ -5,5 +5,5 @@ daemon/configparser.h daemon/configparser.c daemon/mutex.h		\
 daemon/mutex.c jsonschema.h jsonrpc.h jsonrpc.c jsonhelpers.h		\
 jsonhelpers.c filter.h filter.c methods.h methods.c daemon/parent.h	\
 daemon/parent.c ainod.c
-AM_LDFLAGS=-lsystemd -lrt -luuid -ljson-c
+AM_LDFLAGS=-lrt -luuid -ljson-c
 AM_CFLAGS=-pthread -I/usr/include/json-c

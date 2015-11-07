@@ -25,7 +25,19 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/un.h>
+#include "../../config.h"
+
+
+#ifndef HAVE_LIBSYSTEMD
+#define HAVE_LIBSYSTEMD 0
+int sd_listen_fds(int);
+int sd_is_socket_unix (int fd, int type, int listening, const char *path, size_t length) {}
+#define SD_LISTEN_FDS_START 3
+#endif /* HAVE_LIBSYSTEMD */
+
+#if(HAVE_LIBSYSTEMD==1)
 #include <systemd/sd-daemon.h>
+#endif
 
 #include "asocket.h"
 
@@ -38,8 +50,12 @@ int get_socket()
   socklen_t new_length;
   name_length = strlen(ABSTRACT_SOCKET_NAME) + 1;
 
-  /* Check for file descriptors passed by the system manager */
-  n = sd_listen_fds(0);
+  if (HAVE_LIBSYSTEMD == 1) {
+    /* Check for file descriptors passed by the system manager */
+    n = sd_listen_fds(0);
+  } else {
+    n = 0;
+  }
 
   if (n < 0)  {
     /* Below 0 is an error code */

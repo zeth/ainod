@@ -22,7 +22,20 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <stdarg.h>
+
+#include "../config.h"
+
+#ifndef HAVE_LIBSYSTEMD
+#define HAVE_LIBSYSTEMD 0
+
+int sd_journal_send(const char *format, ...);
+
+#endif /* HAVE_LIBSYSTEMD */
+
+#if(HAVE_LIBSYSTEMD==1)
 #include <systemd/sd-journal.h>
+#endif
+
 #include "handleerror.h"
 
 /* Implement the next line properly later */
@@ -47,19 +60,19 @@ int handle_error(char *message, ...) {
   vasprintf(&formatted_message, message, ap);
   va_end (ap);
 
-  if (IS_A_DAEMON) {
-    /** In daemon mode, log to the journal */
-    sd_journal_send("MESSAGE=%s", formatted_message,
-                    "PRIORITY=5",
-                    "HOME=%s", getenv("HOME"),
-                    "TERM=%s", getenv("TERM"),
-                    "PAGE_SIZE=%li", sysconf(_SC_PAGESIZE),
-                    "N_CPUS=%li", sysconf(_SC_NPROCESSORS_ONLN),
-                    NULL);
+  if ((HAVE_LIBSYSTEMD == 1) && (IS_A_DAEMON)) {
+      /** In daemon mode, log to the journal */
+      sd_journal_send("MESSAGE=%s", formatted_message,
+                      "PRIORITY=5",
+                      "HOME=%s", getenv("HOME"),
+                      "TERM=%s", getenv("TERM"),
+                      "PAGE_SIZE=%li", sysconf(_SC_PAGESIZE),
+                      "N_CPUS=%li", sysconf(_SC_NPROCESSORS_ONLN),
+                      NULL);
   } else {
-    /** In terminal, log to the terminal */
     do_printf(formatted_message);
   }
+
   free(formatted_message);
   do_exit();
   return 0;
