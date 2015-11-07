@@ -101,25 +101,23 @@ int parent(void) {
                    path_format);
     }
   }
-  /* Cleanup below */
 
   if (retval) {
-    printf("I am the parent\n");
+    /* Parent's signal handlers */
     if (signal(SIGTERM, sig_term_handler) == SIG_ERR) {
       printf("\ncan't catch SIGTERM\n");
     }
     if (signal(SIGINT, sig_handler) == SIG_ERR) {
       printf("\ncan't catch SIGINT\n");
     }
-
-  } else {
-    printf("I am the child\n");
   }
+
   /* Make sure children are all finished. */
   for(i=0;i<number_of_workers;i++){
     (void) wait(NULL);
   }
 
+  /* Cleanup below */
   /* Bin the config information */
   //delete_store(store);
   free(datadir);
@@ -128,4 +126,3 @@ int parent(void) {
   /* Bin the mutex */
   delete_mutex(mtx);
 }
-
