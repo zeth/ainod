@@ -6,16 +6,18 @@
 Welcome to Ainod's documentation!
 =================================
 
+Ainod is a daemon (background service) that accepts JSON objects and
+stores and retrieves them for you.
+
 Contents:
 
 .. toctree::
     :maxdepth: 2
 
+    faq
     methods
     Filter objects <filter>
     ainod.conf (Man Page) <ainodconf>
-
-
 
 
 Indices and tables
