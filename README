@@ -8,6 +8,25 @@ You could describe ainod as a NoSQL database or a document database
 but ainod uses plain text JSON files as the primary storage format
 rather than a proprietary binary data format.
 
+Documentation
+-------------
+
+To build the documentation you need the Sphinx documentation generator
+
+On Debian, Ubuntu, Raspbian and similar .deb based distributions, you
+can use this command:
+
+sudo apt-get install python3-sphinx
+
+Then:
+
+cd docs
+make html
+make man
+
+The resulting HTML documentation is in _build/html/ and the man page
+documentation is in _build/man/
+
 Depepencies
 -----------
 
