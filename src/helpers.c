@@ -182,13 +182,24 @@ int check_for_highest_revision(int dirfd, char *path) {
 
 int create_file(int dirfd, char *path, int revision, json_object *document) {
   char *filename;
+  char *linkpath;
   asprintf(&filename, "%s/%d.json", path, revision);
+  asprintf(&linkpath, "%s/current.json", path);
   printf("Creating file %s\n", filename);
+  /** TODO pass dirfd to json file creation and use openat() to help
+      avoid race conditions */
   int result = json_object_to_file_ext(filename,
                                        document,
                                        JSON_C_TO_STRING_PRETTY|JSON_C_TO_STRING_SPACED|JSON_C_TO_STRING_NOZERO);
+  if (result != 0) {
+    printf("Houston we have a problem\n");
+  }
+  int symresult = symlinkat(filename, dirfd, linkpath);
+  if (symresult != 0) {
+    printf("Houston we still have a problem\n");
+  }
+  free(linkpath);
   free(filename);
-  /** todo make symlink */
   return result;
 }
 
