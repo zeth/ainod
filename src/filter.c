@@ -42,6 +42,7 @@ char *get_id(void) {
 }
 
 int get_path_from_filter(json_object **filter,
+                         char **reference,
                          char **path,
                          int path_format,
                          const char **error_message,
@@ -53,6 +54,7 @@ int get_path_from_filter(json_object **filter,
   const char *store;
   const char *id;
   const char *collection;
+  int new_id = 0;
 
   /* Check for schema */
   json_bool schema_exists = get_string(*filter, "schema", &schema);
@@ -65,6 +67,7 @@ int get_path_from_filter(json_object **filter,
 
   if (ref_exists == true) {
     asprintf(path, "%s/%s", *datadir, ref);
+    asprintf(reference, "%s", ref);
   } else {
 
     /* get store */
@@ -94,6 +97,7 @@ int get_path_from_filter(json_object **filter,
       if (create == 1) {
         printf("Create ID\n");
         id = get_id();
+        new_id = 1;
         printf("We made %s\n", id);
       } else {
         printf("This is the end of the road, megatron");
@@ -104,17 +108,18 @@ int get_path_from_filter(json_object **filter,
     /* Now assemble the path */
     switch(path_format) {
     case 0:
-      asprintf(path, "%s/%s/%s/%s", *datadir, store, schema, id);
+      asprintf(reference, "%s/%s/%s", store, schema, id);
       break;
 
     case 1:
-      asprintf(path, "%s/%s/%s/%s", *datadir, store, collection, id);
+      asprintf(reference, "%s/%s/%s", store, collection, id);
       break;
 
     case 2:
-      asprintf(path, "%s/%s/%s/%s", *datadir, store, id, schema);
+      asprintf(reference, "%s/%s/%s", store, id, schema);
       break;
     }
+    asprintf(path, "%s/%s", *datadir, *reference);
   }
 
   /** Avoid path traversal, keep data within data dir. */
@@ -148,7 +153,9 @@ int get_path_from_filter(json_object **filter,
   /* TODO: Hand on the absolute path rather than raw */
   /* rewrite above slightly */
 
-
   free(absolute_path);
+  if (new_id == 1){
+    free((char*) id);
+  }
   return 0;
 }

@@ -28,12 +28,14 @@
 /** By simple we mean that everything complicated is mocked. */
 
 int mock_get_path_from_filter(json_object **filter,
+                              char **reference,
                               char **path,
                               int path_format,
                               const char **error_message,
                               char **datadir,
                               int create) {
     asprintf(path, "/tmp/nothing.json");
+    asprintf(reference, "nothing");
     return 0;
 }
 

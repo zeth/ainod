@@ -10,8 +10,9 @@ libainod_a_SOURCES= ../src/handleerror.h ../src/handleerror.c		\
 ../src/daemon/configparser.c ../src/daemon/mutex.h			\
 ../src/daemon/mutex.c ../src/jsonschema.h ../src/jsonrpc.h		\
 ../src/jsonrpc.c ../src/jsonhelpers.h ../src/jsonhelpers.c		\
-../src/filter.h ../src/filter.c ../src/methods.h ../src/methods.c	\
-../src/daemon/parent.h ../src/daemon/parent.c
+../src/filter.h ../src/filter.c ../src/helpers.h ../src/helpers.c	\
+../src/methods.h ../src/methods.c ../src/daemon/parent.h		\
+../src/daemon/parent.c
 
 # Tell automake to build the testrunner on "make check"
 check_PROGRAMS= testrunner

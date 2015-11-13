@@ -29,6 +29,7 @@
 static void test_get_path_from_filter(void)
 {
   json_object *filter_object;
+  char *reference;
   char *path;
   const char **error_message;
   char *datadir = "/var/lib/ainodb";
@@ -46,6 +47,7 @@ static void test_get_path_from_filter(void)
                          "id",
                          idstring);
   int result = get_path_from_filter(&filter_object,
+                                    &reference,
                                     &path,
                                     2,
                                     error_message,
@@ -55,6 +57,7 @@ static void test_get_path_from_filter(void)
   json_object_put(filter_object);
   NP_ASSERT_STR_EQUAL(path,
                       "/var/lib/ainodb/catalog/704e418e-682d-4ade-99be-710f2208102e/product");
+  free(reference);
   free(path);
 
 }

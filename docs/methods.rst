@@ -69,6 +69,13 @@ Replaces a document or documents.
              * *replacement*: The new document(s).
              * *upsert* (optional): If true, perform an insert if no documents match the filter.
 
+rename
+------
+
+Creates a new document with historical link to an old document.
+
+[Have to think about the parameters.]
+
 reindex
 -------
 

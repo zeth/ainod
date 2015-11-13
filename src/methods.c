@@ -29,6 +29,7 @@
 #include "methods.h"
 #include "jsonhelpers.h"
 #include "filter.h"
+#include "helpers.h"
 
 /** Note to support multiple results, we will need to stream back the documents */
 int get(json_object *params,
@@ -38,13 +39,14 @@ int get(json_object *params,
         char *datadir) {
 
   char *path;
+  char *reference;
   json_object *filter_object;
   int fsuccess;
 
   /* get filter */
   json_bool filter_exists = json_object_object_get_ex(params, "filter", &filter_object);
   if (filter_exists == true) {
-    fsuccess = get_path_from_filter(&filter_object, &path, path_format, error_message, &datadir, 0);
+    fsuccess = get_path_from_filter(&filter_object, &reference, &path, path_format, error_message, &datadir, 0);
   } else {
     printf("No filter found\n");
   }
@@ -62,7 +64,7 @@ int get(json_object *params,
   int gsuccess = get_object_from_filename(current,
                                           data,
                                           error_message);
-
+  free(reference);
   free(path);
   free(current);
 
@@ -80,25 +82,45 @@ int create(json_object *params,
            char *datadir) {
   printf("Create.\n");
 
+  char *reference;
   char *path;
   json_object *filter_object;
   int fsuccess;
 
   json_bool filter_exists = json_object_object_get_ex(params, "filter", &filter_object);
   if (filter_exists == true) {
-    fsuccess = get_path_from_filter(&filter_object, &path, path_format, error_message, &datadir, 1);
+    fsuccess = get_path_from_filter(&filter_object, &reference, &path, path_format, error_message, &datadir, 1);
   } else {
     printf("No filter found\n");
   }
 
   if (fsuccess != 0) {
+
     return fsuccess;
   }
+  printf("We got this reference %s\n", reference);
 
-  printf("We got this path %s\n", path);
 
-  /** Now look at filesstuff.c */
+  json_object *document_object;
+  json_bool document_exists = json_object_object_get_ex(params, "document", &document_object);
+  /** TODO: go off for validaton here. **/
 
+  int result = create_new_file(path, document_object);
+  if (result == 0) {
+    printf("Success\n");
+  } else {
+    printf("Failure\n");
+  }
+
+  *data = json_object_new_object();
+  json_object *created = json_object_new_string(reference);
+  json_object_object_add(*data, "created", created);
+
+  /** TODO: go off for validaton here. **/
+  //json_object_put(document_object);
+
+
+  free(reference);
   free(path);
   return 0;
 }
@@ -108,8 +130,7 @@ int save() {
 }
 
 int delete() {
-  /* Set the symlink to 0.json */
-  /* Does get need to check for the 0? */
+  /* Set the symlink to e.g. 4.deletedmarker.json */
   printf("Delete.\n");
 }
 
