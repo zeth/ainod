@@ -22,6 +22,6 @@
 #ifndef AINOD_HELPERS_H
 #define AINOD_HELPERS_H
 
-int create_new_file(char *path, json_object *document);
+int create_new_file(char *path, json_object *document, const char **error_message);
 
 #endif /* AINOD_HELPERS_H */

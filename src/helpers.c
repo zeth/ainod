@@ -17,41 +17,6 @@
   along with ainod; If not, see <http://www.gnu.org/licenses/>.
 ***/
 
-/**
-
-0. Try to create the directory.
-
-mkdirat
-
-Success = 0 --> go to 4.
-Error = -1
-
-errno:
-ENOENT - parent does not exist --> goto 1.
-
-EEXIST - pathname already exists --> goto 2.
-
-All other errors - give up.
-
-1. Make all parents. --> Goto 0.
-
-2. Try to find current.json
-
-readlinkat
-
-ENOENT - link does not exist. --> goto 3
-
-Link exists, throw duplicatekey error
-
-3. Look for other files in directory, find the one with highest number in name
--->goto 5 with arg of number+1
-
-4. --> Goto 5 with arg of 1.
-
-5. Create {n}.json, fill it with the data and make current.json symlink
-
-**/
-
 #define _GNU_SOURCE
 
 #include <stdlib.h>
@@ -83,22 +48,26 @@ int create_document_dir(int dirfd, char *path) {
 int make_parents(int dirfd, char *directory) {
   char *remainder = directory;
   int fd;
+  int error;
   while (*remainder == '/')
     remainder++; /* Gets rid of leading slash */
   for (;;) {
     strsep(&remainder, "/");
     if (remainder == NULL) {
       /* We are finished */
+      error = 0;
       break;
       }
     while (*remainder == '/')
       remainder++;
     if ((fd = mkdirat(dirfd, directory, S_IRWXU|S_IRWXG|S_IROTH)) < 0 && errno != EEXIST) {
+      error = errno;
       printf("Problem! %d\n", errno);
       break;
     }
     if ((fd = openat(dirfd, directory, O_DIRECTORY)) < 0) {
       printf("Problem! %d\n", errno);
+      error = errno;
       break;
     }
     if (dirfd != AT_FDCWD) {
@@ -108,6 +77,7 @@ int make_parents(int dirfd, char *directory) {
     directory = remainder;
   }
   free(remainder);
+  return error;
 }
 
 /** When creating a new object, current is not allowed to exist. */
@@ -180,46 +150,64 @@ int check_for_highest_revision(int dirfd, char *path) {
   return highest_revision;
 }
 
-int create_file(int dirfd, char *path, int revision, json_object *document) {
+int create_file(int dirfd,
+                char *path,
+                int revision,
+                json_object *document,
+                const char **error_message) {
   char *filename;
   char *linkpath;
+  int errsv;
   asprintf(&filename, "%s/%d.json", path, revision);
   asprintf(&linkpath, "%s/current.json", path);
   printf("Creating file %s\n", filename);
-  /** TODO pass dirfd to json file creation and use openat() to help
+  /* TODO pass dirfd to json file creation and use openat() to help
       avoid race conditions */
   int result = json_object_to_file_ext(filename,
                                        document,
                                        JSON_C_TO_STRING_PRETTY|JSON_C_TO_STRING_SPACED|JSON_C_TO_STRING_NOZERO);
   if (result != 0) {
-    printf("Houston we have a problem\n");
+    /* TODO replace this with the real errno. */
+    *error_message = "Could not save document. File error. Check permissions and configuration.";
+    return -32000;
   }
   int symresult = symlinkat(filename, dirfd, linkpath);
   if (symresult != 0) {
-    printf("Houston we still have a problem\n");
+    errsv = errno;
+    char *message_buffer;
+    message_buffer = malloc(BUFSIZ);
+    *error_message = strerror_r(errsv, message_buffer, BUFSIZ);
+    free(message_buffer);
+    return errsv;
   }
   free(linkpath);
   free(filename);
-  return result;
+  return 0;
 }
 
-int create_new_file(char *path, json_object *document) {
+int create_new_file(char *path,
+                    json_object *document,
+                    const char **error_message) {
   int dirfd = AT_FDCWD;
   int error = create_document_dir(dirfd, path);
   /* All worked, make the file */
   if (error == 0) {
-    int another = create_file(dirfd, path, 1, document);
-    return 0;
+    int another = create_file(dirfd, path, 1, document, error_message);
+    return another;
   }
 
   /* Missing parent dir(s), make them then make the file. */
   if (error == ENOENT) {
     printf("Making parents.\n");
     char *directory = strdup(path);
-    make_parents(dirfd, directory);
-    free(directory);
-    int another = create_file(dirfd, path, 1, document);
-    return 0;
+    int parents = make_parents(dirfd, directory);
+    if (parents == 0) {
+      free(directory);
+      int another = create_file(dirfd, path, 1, document, error_message);
+      return another;
+    } else {
+      error = parents;
+    }
   }
 
   /* Dir already exists, look inside it */
@@ -227,17 +215,21 @@ int create_new_file(char *path, json_object *document) {
     printf("Directory already exists.\n");
     if (check_for_no_current(dirfd, path) == -1) {
       /* Crap out with duplicate key error */
-      printf("Duplicate key error!!!!.\n");
-      return -200;
+      *error_message = "Duplicate Key Error on create method.";
+      return -11000; /** MongoDB joke */
     }
     printf("Current.json does not exist.\n");
     int highest_revision = check_for_highest_revision(dirfd, path);
     printf("Highest revision was %d.\n", highest_revision);
-    int another = create_file(dirfd, path, highest_revision+1, document);
+    int another = create_file(dirfd, path, highest_revision+1, document, error_message);
     return 0;
   }
 
-  printf("Other problem, crap out.\n");
+  /* Other problem, crap out. */
+  char *message_buffer;
+  message_buffer = malloc(BUFSIZ);
+  *error_message = strerror_r(error, message_buffer, BUFSIZ);
+  free(message_buffer);
   return error;
 }
 

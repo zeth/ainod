@@ -98,31 +98,22 @@ int create(json_object *params,
 
     return fsuccess;
   }
-  printf("We got this reference %s\n", reference);
-
 
   json_object *document_object;
   json_bool document_exists = json_object_object_get_ex(params, "document", &document_object);
   /** TODO: go off for validaton here. **/
 
-  int result = create_new_file(path, document_object);
+  int result = create_new_file(path, document_object, error_message);
+
   if (result == 0) {
-    printf("Success\n");
-  } else {
-    printf("Failure\n");
+    *data = json_object_new_object();
+    json_object *created = json_object_new_string(reference);
+    json_object_object_add(*data, "created", created);
   }
-
-  *data = json_object_new_object();
-  json_object *created = json_object_new_string(reference);
-  json_object_object_add(*data, "created", created);
-
-  /** TODO: go off for validaton here. **/
-  //json_object_put(document_object);
-
 
   free(reference);
   free(path);
-  return 0;
+  return result;
 }
 
 int save() {
