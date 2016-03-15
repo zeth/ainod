@@ -53,21 +53,21 @@ uuid. You also the headers for systemd on platforms that use that
 (most modern systems except Gentoo - see above).
 
 On Debian, Ubuntu, Raspbian and similar .deb based distributions, you
-can use this command:
+can use this command::
 
-sudo apt-get install libjson-c-dev libsystemd-dev uuid-dev
+    sudo apt-get install libjson-c-dev libsystemd-dev uuid-dev
 
-You will also need a C build environment which you can install using:
+You will also need a C build environment which you can install using::
 
-sudo apt-get install build-essential autoconf
+    sudo apt-get install build-essential autoconf
 
-On Fedora or similar .rpm based distributions, you can use:
+On Fedora or similar .rpm based distributions, you can use::
 
-dnf install json-c-devel systemd-devel uuid-devel
+    dnf install json-c-devel systemd-devel uuid-devel
 
-or if you are old school:
+or if you are old school::
 
-yum install json-c-devel systemd-devel uuid-devel
+    yum install json-c-devel systemd-devel uuid-devel
 
 How do I install ainod
 ----------------------
@@ -76,21 +76,21 @@ We hope one day to have pre-built ainod binaries, preferably available
 from the distribution's own package management system. Until then, you
 need to compile it.
 
-Compile ainod using:
+Compile ainod using::
 
-./autogen.sh
-./configure
-make
+    ./autogen.sh
+    ./configure
+    make
 
-To install it to the system:
+To install it to the system::
 
-sudo make install
+    sudo make install
 
 If you don't want to install it systemwide, you can run ainod from
-userspace using:
+userspace using::
 
-cd src
-./ainod
+    cd src
+    ./ainod
 
 
 How do I run the unit tests?
@@ -107,19 +107,19 @@ gets fixed someday at least for Raspbian. Ainod does however work on
 Raspbian, just the test runner doesn't work.
 
 To install Valgrind, you can use the package manager again, for
-example:
+example::
 
-sudo apt-get install valgrind
+    sudo apt-get install valgrind
 
 Once you have both NovaProva and Valgrind installed, you need to
-compile ainod with tests enabled:
+compile ainod with tests enabled::
 
-./autogen.sh --enable-tests
-make
+    ./autogen.sh --enable-tests
+    make
 
-The make check command runs the tests:
+The make check command runs the tests::
 
-make check
+    make check
 
 
 Why does ainod not support other operating systems
