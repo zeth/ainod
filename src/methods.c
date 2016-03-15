@@ -95,7 +95,6 @@ int create(json_object *params,
   }
 
   if (fsuccess != 0) {
-
     return fsuccess;
   }
 
