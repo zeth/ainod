@@ -14,7 +14,7 @@ Documentation
 To build the documentation you need the Sphinx documentation generator
 
 On Debian, Ubuntu, Raspbian and similar .deb based distributions, you
-can use this command:
+can use this command
 
 sudo apt-get install python3-sphinx
 
@@ -57,11 +57,11 @@ yum install json-c-devel systemd-devel uuid-devel
 Installation
 ------------
 
-Compile ainod using:
+Compile ainod using::
 
-./autogen.sh
-./configure
-make
+    ./autogen.sh
+    ./configure
+    make
 
 To install it to the system:
 
