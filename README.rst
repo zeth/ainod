@@ -44,7 +44,7 @@ can use this command::
 
 You will also need a C build environment which you can install using::
 
-    sudo apt-get install build-essential autoconf
+    sudo apt-get install build-essential autoconf pkg-config
 
 On Fedora or similar .rpm based distributions, you can use::
 
