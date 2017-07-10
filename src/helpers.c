@@ -130,12 +130,11 @@ int check_for_highest_revision(int dirfd, char *path) {
   int current_revision;
   int fd = openat(dirfd, path, O_DIRECTORY);
   DIR *current_dir = fdopendir(fd);
-  struct dirent entry;
   struct dirent *result;
 
   /* Loop through the directory stream until empty */
   for (;;) {
-    int error = readdir_r(current_dir, &entry, &result);
+    result = readdir(current_dir);
     if (result == NULL) {
       /* Got nothing left in stream */
       break;
