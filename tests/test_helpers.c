@@ -74,24 +74,28 @@ START_TEST(test_get_revision_from_filename_no_extension)
 END_TEST
 
 
+TCase *get_revision_test_case(void)
+{
+  TCase *get_revision;
+  get_revision = tcase_create("GetRevision");
+  tcase_add_test(get_revision, test_get_revision_from_filename);
+  tcase_add_test(get_revision, test_get_revision_from_filename_no_number);
+  tcase_add_test(get_revision, test_get_revision_from_filename_junk);
+  tcase_add_test(get_revision, test_get_revision_from_filename_blank);
+  tcase_add_test(get_revision, test_get_revision_from_filename_half_blank);
+  tcase_add_test(get_revision, test_get_revision_from_filename_no_extension);
+  return get_revision;
+}
+
+
 Suite * helpers_suite(void)
 {
     Suite *s;
     TCase *get_revision;
 
     s = suite_create("Helpers");
-
-    /* Core test case */
-    get_revision = tcase_create("GetRevision");
-
-    tcase_add_test(get_revision, test_get_revision_from_filename);
-    tcase_add_test(get_revision, test_get_revision_from_filename_no_number);
-    tcase_add_test(get_revision, test_get_revision_from_filename_junk);
-    tcase_add_test(get_revision, test_get_revision_from_filename_blank);
-    tcase_add_test(get_revision, test_get_revision_from_filename_half_blank);
-    tcase_add_test(get_revision, test_get_revision_from_filename_no_extension);
+    get_revision = get_revision_test_case();
     suite_add_tcase(s, get_revision);
-
     return s;
 }
 
