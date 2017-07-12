@@ -1,7 +1,7 @@
 
 
 if TESTS_ENABLED
-SUBDIRS = src . test
+SUBDIRS = src . tests
 else
 SUBDIRS = src
 endif

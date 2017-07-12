@@ -36,7 +36,7 @@ AC_CHECK_FUNCS([ftruncate memset socket strchr strcspn strdup strerror strndup s
 AC_CONFIG_FILES([
  Makefile
  src/Makefile
- test/Makefile
+ tests/Makefile
 ])
 
 # Check for optional dependencies
@@ -45,13 +45,13 @@ AC_ARG_ENABLE([tests],
 
 AS_IF([test "x$enable_tests" = "xyes"], [
   # Do the stuff needed for enabling the feature
-  AC_MSG_NOTICE([Tests have been enabled!!!!!!!!!!])
-  PKG_CHECK_EXISTS([novaprova],
+  AC_MSG_NOTICE([Tests have been enabled])
+  PKG_CHECK_EXISTS([check],
           [
-        AC_MSG_NOTICE([Found novaprova])
-        PKG_CHECK_MODULES(NOVAPROVA, novaprova)
+        AC_MSG_NOTICE([Found check])
+        PKG_CHECK_MODULES(CHECK, check)
         ],
-        [AC_MSG_NOTICE([Did not find novaprova])])
+        [AC_MSG_NOTICE([Did not find check])])
 ])
 AM_CONDITIONAL([TESTS_ENABLED], [test "x$enable_tests" = "xyes"])
 
