@@ -98,6 +98,17 @@ int check_for_no_current(int dirfd, char *path) {
 /** Convert the filename into a revision number, or -1 if not possible.  */
 int get_revision_from_filename(char *name)
 {
+  if(name[0] == '\0')
+    /** Blank input (i.e. just the null terminator) */
+    {
+      return -1;
+    }
+  if (strchr(name, '.') == NULL)
+    {
+    /** No extension separator */
+    return -1;
+    }
+
   char *extension = name;
   char *endptr;
   strsep(&extension, ".");
