@@ -8,6 +8,10 @@ You could describe ainod as a NoSQL database or a document database
 but ainod uses plain text JSON files as the primary storage format
 rather than a proprietary binary data format.
 
+**This is very early, many essential features do not exist yet.**
+
+**Read on if you want to help develop ainod, otherwise come back later**
+
 Documentation
 -------------
 
@@ -77,22 +81,15 @@ Unit Tests
 ----------
 
 Unit test support is not built in by default. To run the unit tests,
-you need both Valgrind and the NovaProva unit test
-framework. Instructions for getting the latter are here:
-http://novaprova.readthedocs.org/en/latest/getting-started.html
+you need to install check.
 
-Sadly NovaProva does not yet support ARM or any other non-Intel
-architecture so you cannot run the tests on Raspbian. Hopefully, that
-gets fixed someday at least for Raspbian. Ainod does however work on
-Raspbian, just the test runner doesn't work.
-
-To install Valgrind, you can use the package manager again, for
+To install check, you can use the package manager again, for
 example::
 
-    sudo apt-get install valgrind
+    sudo apt-get install check
 
-Once you have both NovaProva and Valgrind installed, you need to
-compile ainod with tests enabled::
+Once you have check installed, you need to compile ainod with tests
+enabled::
 
     ./autogen.sh --enable-tests
     make
