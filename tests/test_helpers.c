@@ -5,8 +5,10 @@
 #include <check.h>
 #include "../src/helpers.c"
 
-/** Test Cases */
+/** Test Fixtures */
 #include "fixtures.c"
+
+/** Test Cases */
 #include "helpers/get_revision_from_filename.c"
 #include "helpers/create_document_dir.c"
 
