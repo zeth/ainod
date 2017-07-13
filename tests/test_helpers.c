@@ -6,6 +6,7 @@
 #include "../src/helpers.c"
 
 /** Test Cases */
+#include "fixtures.c"
 #include "helpers/get_revision_from_filename.c"
 #include "helpers/create_document_dir.c"
 
