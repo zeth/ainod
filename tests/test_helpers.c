@@ -9,8 +9,13 @@
 #include "fixtures.c"
 
 /** Test Cases */
-#include "helpers/get_revision_from_filename.c"
+#include "helpers/check_for_highest_revision.c"
+#include "helpers/check_for_no_current.c"
 #include "helpers/create_document_dir.c"
+#include "helpers/create_file.c"
+#include "helpers/create_new_file.c"
+#include "helpers/get_revision_from_filename.c"
+#include "helpers/make_parents.c"
 
 
 /** Test Suite **/
@@ -19,11 +24,15 @@ Suite * helpers_suite(void)
     Suite *s;
     TCase *get_revision;
     TCase *create_document;
+    TCase *check_for_no;
     s = suite_create("Helpers");
     get_revision = get_revision_test_case();
     suite_add_tcase(s, get_revision);
     create_document = create_document_dir_test_case();
     suite_add_tcase(s, create_document);
+    check_for_no = check_for_no_current_test_case();
+    suite_add_tcase(s, check_for_no);
+
     return s;
 }
 

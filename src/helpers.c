@@ -83,14 +83,27 @@ int check_for_no_current(int dirfd, char *path) {
   char *current;
   const char *tail = "/current.json";
   asprintf(&current, "%s%s", path, tail);
+
   char buff[255]; /* We are not going to use it anyway, so don't care if path is truncated */
   ssize_t length = readlinkat(dirfd, current, buff, sizeof(buff)-1);
+  int errsv = errno;
   free(current);
-  if (length == -1) {
-    return 0;
-  } else {
+  if (length != -1) {
+    /** Symlink exists. */
     return -1;
   }
+  if (errsv == ENOENT) {
+    /** Symlink does not exist, all clear */
+    return 0;
+  }
+
+  if (errsv == EINVAL) {
+    /** Something else exists at the location */
+    return -1;
+  }
+
+  /** Some other problem */
+  return -1;
 }
 
 /** Convert the filename into a revision number, or -1 if not possible.  */
