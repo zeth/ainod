@@ -35,7 +35,6 @@
 int create_document_dir(int dirfd, char *path) {
   int success = mkdirat(dirfd, path, S_IRWXU|S_IRWXG|S_IROTH);
   if (success == 0) {
-    printf("Happy\n");
     return 0;
   } else {
     int errsv = errno;
