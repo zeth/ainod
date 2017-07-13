@@ -33,13 +33,12 @@
 #include "helpers.h"
 
 int create_document_dir(int dirfd, char *path) {
-  int errsv;
   int success = mkdirat(dirfd, path, S_IRWXU|S_IRWXG|S_IROTH);
   if (success == 0) {
     printf("Happy\n");
     return 0;
   } else {
-    errsv = errno;
+    int errsv = errno;
     return errsv;
   }
 };
@@ -47,7 +46,6 @@ int create_document_dir(int dirfd, char *path) {
 /** Go through the whole path and make sure each directory exists **/
 int make_parents(int dirfd, char *directory) {
   char *remainder = directory;
-  int fd;
   int error;
   while (*remainder == '/')
     remainder++; /* Gets rid of leading slash */
@@ -60,6 +58,7 @@ int make_parents(int dirfd, char *directory) {
       }
     while (*remainder == '/')
       remainder++;
+    int fd;
     if ((fd = mkdirat(dirfd, directory, S_IRWXU|S_IRWXG|S_IROTH)) < 0 && errno != EEXIST) {
       error = errno;
       printf("Problem! %d\n", errno);
@@ -138,7 +137,6 @@ int get_revision_from_filename(char *name)
 /** Check for the highest revision number in a document directory */
 int check_for_highest_revision(int dirfd, char *path) {
   int highest_revision = 0;
-  int current_revision;
   int fd = openat(dirfd, path, O_DIRECTORY);
   DIR *current_dir = fdopendir(fd);
   struct dirent *result;
@@ -151,7 +149,7 @@ int check_for_highest_revision(int dirfd, char *path) {
       break;
     }
     char *filename = result->d_name;
-    current_revision = get_revision_from_filename(filename);
+    int current_revision = get_revision_from_filename(filename);
     if (current_revision > highest_revision) {
       highest_revision = current_revision;
     }
@@ -167,7 +165,6 @@ int create_file(int dirfd,
                 const char **error_message) {
   char *filename;
   char *linkpath;
-  int errsv;
   asprintf(&filename, "%s/%d.json", path, revision);
   asprintf(&linkpath, "%s/current.json", path);
   printf("Creating file %s\n", filename);
@@ -179,15 +176,17 @@ int create_file(int dirfd,
   if (result != 0) {
     /* TODO replace this with the real errno. */
     *error_message = "Could not save document. File error. Check permissions and configuration.";
+    free(linkpath);
     return -32000;
   }
   int symresult = symlinkat(filename, dirfd, linkpath);
   if (symresult != 0) {
-    errsv = errno;
+    int errsv = errno;
     char *message_buffer;
     message_buffer = malloc(BUFSIZ);
     *error_message = strerror_r(errsv, message_buffer, BUFSIZ);
     free(message_buffer);
+    free(linkpath);
     return errsv;
   }
   free(linkpath);
@@ -232,6 +231,10 @@ int create_new_file(char *path,
     int highest_revision = check_for_highest_revision(dirfd, path);
     printf("Highest revision was %d.\n", highest_revision);
     int another = create_file(dirfd, path, highest_revision+1, document, error_message);
+    if (another != 0) {
+      *error_message = "Error creating file.";
+      return -1;
+    }
     return 0;
   }
 
