@@ -7,6 +7,7 @@
 
 /** Test Cases */
 #include "helpers/get_revision_from_filename.c"
+#include "helpers/create_document_dir.c"
 
 
 /** Test Suite **/
@@ -14,10 +15,12 @@ Suite * helpers_suite(void)
 {
     Suite *s;
     TCase *get_revision;
-
+    TCase *create_document;
     s = suite_create("Helpers");
     get_revision = get_revision_test_case();
     suite_add_tcase(s, get_revision);
+    create_document = create_document_dir_test_case();
+    suite_add_tcase(s, create_document);
     return s;
 }
 
