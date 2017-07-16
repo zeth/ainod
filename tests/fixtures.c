@@ -51,3 +51,24 @@ void test_check_directory_existence(const char *directory)
   ck_assert_int_eq(existence_err, 0);
   free(check_directory);
 }
+
+void test_create_numbered_file(int number)
+{
+  char *numbered_filename;
+  asprintf(&numbered_filename, "%s/%d.json", fixture_directory_path, number);
+  int fd = open(numbered_filename, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+  ck_assert_int_ne(fd, -1);
+  struct stat file_status;
+  int existence_err = stat(numbered_filename, &file_status);
+  ck_assert_int_eq(existence_err, 0);
+}
+
+void delete_numbered_file(int number)
+{
+  char *numbered_filename;
+  asprintf(&numbered_filename, "%s/%d.json", fixture_directory_path, number);
+  errno = 0;
+  int unlink_err = unlink(numbered_filename);
+  int errvo = errno;
+  ck_assert_int_eq(unlink_err, 0);
+}
