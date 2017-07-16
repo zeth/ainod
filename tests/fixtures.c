@@ -71,4 +71,38 @@ void delete_numbered_file(int number)
   int unlink_err = unlink(numbered_filename);
   int errvo = errno;
   ck_assert_int_eq(unlink_err, 0);
+  free(numbered_filename);
+}
+
+void delete_current_symlink(void)
+{
+  char *current_filename;
+  asprintf(&current_filename, "%s/current.json", fixture_directory_path);
+  errno = 0;
+  int unlink_err = unlink(current_filename);
+  int errvo = errno;
+  ck_assert_int_eq(unlink_err, 0);
+  free(current_filename);
+}
+
+int read_numbered_file(int number, char* buffer)
+{
+  char *fullpath;
+  asprintf(&fullpath, "%s/%d.json", fixture_directory_path, number);
+  int fd = open(fullpath, O_RDONLY);
+  int num_read = read(fd, buffer, JSON_FILE_BUF_SIZE);
+  buffer[num_read] = '\0';
+  free(fullpath);
+  return 0;
+}
+
+void check_contents_numbered_file(int number, char *contents)
+// Check the file has the correct contents
+// For better isolation, we will just read the file
+// instead of using json-c api
+{
+  char *buffer = (char *) malloc(JSON_FILE_BUF_SIZE);
+  int read_result = read_numbered_file(1, buffer);
+  ck_assert_str_eq(buffer, contents);
+  free(buffer);
 }

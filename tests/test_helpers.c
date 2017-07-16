@@ -28,6 +28,7 @@ Suite * helpers_suite(void)
     suite_add_tcase(test_suite, check_for_no_current_test_case());
     suite_add_tcase(test_suite, make_parents_test_case());
     suite_add_tcase(test_suite, check_for_highest_revision_test_case());
+    suite_add_tcase(test_suite, create_file_test_case());
     return test_suite;
 }
 
