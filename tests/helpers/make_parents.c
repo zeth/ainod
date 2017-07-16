@@ -10,7 +10,9 @@ START_TEST(test_make_parents)
 
   // Add the directories
   char *creation_directory;
-  asprintf(&creation_directory, "%s/test_make_parents_top_dir/middle_dir/bottom_dir/", fixture_directory_path);
+  asprintf(&creation_directory,
+           "%s/test_make_parents_top_dir/middle_dir/bottom_dir/",
+           fixture_directory_path);
   int creation_result = make_parents(dirfd, creation_directory);
   ck_assert_int_eq(creation_result, 0);
   free(creation_directory);
@@ -31,7 +33,9 @@ TCase *make_parents_test_case(void)
 {
   TCase *test_case;
   test_case = tcase_create("MakeParents");
-  tcase_add_checked_fixture(test_case, create_fixture_directory, delete_fixture_directory);
+  tcase_add_checked_fixture(test_case,
+                            create_fixture_directory,
+                            delete_fixture_directory);
   tcase_add_test(test_case, test_make_parents);
   return test_case;
 }

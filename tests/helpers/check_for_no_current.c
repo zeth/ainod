@@ -83,7 +83,9 @@ TCase *check_for_no_current_test_case(void)
 {
   TCase *test_case;
   test_case = tcase_create("CheckNoCurrent");
-  tcase_add_checked_fixture(test_case, create_fixture_directory, delete_fixture_directory);
+  tcase_add_checked_fixture(test_case,
+                            create_fixture_directory,
+                            delete_fixture_directory);
   tcase_add_test(test_case, test_check_for_no_current);
   tcase_add_test(test_case, test_check_for_existing_current_blank_file);
   tcase_add_test(test_case, test_check_for_existing_symlink);
