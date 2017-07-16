@@ -16,12 +16,9 @@ START_TEST(test_get_create_document_dir)
   asprintf(&test_dir, "%s/test_create_document_dir", fixture_directory_path);
   int creation_error = create_document_dir(dirfd, test_dir);
   ck_assert_int_eq(creation_error, 0);
-  struct stat s;
-  int existence_err = stat(test_dir, &s);
-  ck_assert_int_eq(existence_err, 0);
-  int removal_error = rmdir(test_dir);
-  ck_assert_int_eq(removal_error, 0);
-  free(test_dir);
+
+  test_check_directory_existence("test_create_document_dir");
+  test_delete_directory("test_create_document_dir");
 }
 END_TEST
 

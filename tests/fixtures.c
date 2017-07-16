@@ -32,3 +32,22 @@ void delete_fixture_directory(void)
   ck_assert_int_eq(removal_error, 0);
   free(fixture_directory_path);
 }
+
+void test_delete_directory(const char *directory)
+{
+  char *delete_directory;
+  asprintf(&delete_directory, "%s/%s/", fixture_directory_path, directory);
+  int removal_error = rmdir(delete_directory);
+  ck_assert_int_eq(removal_error, 0);
+  free(delete_directory);
+}
+
+void test_check_directory_existence(const char *directory)
+{
+  char *check_directory;
+  asprintf(&check_directory, "%s/%s/", fixture_directory_path, directory);
+  struct stat file_status;
+  int existence_err = stat(check_directory, &file_status);
+  ck_assert_int_eq(existence_err, 0);
+  free(check_directory);
+}

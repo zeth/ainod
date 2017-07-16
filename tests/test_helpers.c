@@ -21,19 +21,13 @@
 /** Test Suite **/
 Suite * helpers_suite(void)
 {
-    Suite *s;
-    TCase *get_revision;
-    TCase *create_document;
-    TCase *check_for_no;
-    s = suite_create("Helpers");
-    get_revision = get_revision_test_case();
-    suite_add_tcase(s, get_revision);
-    create_document = create_document_dir_test_case();
-    suite_add_tcase(s, create_document);
-    check_for_no = check_for_no_current_test_case();
-    suite_add_tcase(s, check_for_no);
-
-    return s;
+    Suite *test_suite;
+    test_suite = suite_create("Helpers");
+    suite_add_tcase(test_suite, get_revision_test_case());
+    suite_add_tcase(test_suite, create_document_dir_test_case());
+    suite_add_tcase(test_suite, check_for_no_current_test_case());
+    suite_add_tcase(test_suite, make_parents_test_case());
+    return test_suite;
 }
 
 /** Test Runner **/

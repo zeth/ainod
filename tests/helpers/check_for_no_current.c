@@ -22,7 +22,7 @@ START_TEST(test_check_for_existing_symlink)
 
   int dirfd = AT_FDCWD;
 
-    /** Create a numbered file */
+  /** Create a numbered file */
   char *numbered_file;
   asprintf(&numbered_file, "%s/1.json", fixture_directory_path);
   int fd = open(numbered_file, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
@@ -31,8 +31,7 @@ START_TEST(test_check_for_existing_symlink)
   int existence_err = stat(numbered_file, &s);
   ck_assert_int_eq(existence_err, 0);
 
-
-    /** Create a current.json symlink */
+  /** Create a current.json symlink */
   char *current_file;
   asprintf(&current_file, "%s/current.json", fixture_directory_path);
   int symlink_error = symlink(numbered_file, current_file);
