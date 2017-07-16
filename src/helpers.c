@@ -253,9 +253,3 @@ int create_new_file(char *path,
   return error;
 }
 
-
-//int main() {
-//  char *path = strdup("/home/zeth/c/store/dog/product/0ccc6671-c598-42b9-9761-a9e0776abc8ef");
-//  int success = perform_create(path);
-//  free(path);
-//}
