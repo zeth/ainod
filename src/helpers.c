@@ -179,7 +179,6 @@ int create_file(int dirfd,
   char *linkpath;
   asprintf(&filename, "%s/%d.json", path, revision);
   asprintf(&linkpath, "%s/current.json", path);
-  printf("Creating file %s\n", filename);
   /* TODO pass dirfd to json file creation and use openat() to help
       avoid race conditions */
   int result = json_object_to_file_ext(filename,
@@ -219,7 +218,6 @@ int create_new_file(char *path,
 
   /* Missing parent dir(s), make them then make the file. */
   if (error == ENOENT) {
-    printf("Making parents.\n");
     char *directory = strdup(path);
     int parents = make_parents(dirfd, directory);
     if (parents == 0) {
@@ -233,15 +231,12 @@ int create_new_file(char *path,
 
   /* Dir already exists, look inside it */
   if (error == EEXIST) {
-    printf("Directory already exists.\n");
     if (check_for_no_current(dirfd, path) == -1) {
       /* Crap out with duplicate key error */
       *error_message = "Duplicate Key Error on create method.";
       return -11000; /** MongoDB joke */
     }
-    printf("Current.json does not exist.\n");
     int highest_revision = check_for_highest_revision(dirfd, path);
-    printf("Highest revision was %d.\n", highest_revision);
     int another = create_file(dirfd, path, highest_revision+1, document, error_message);
     if (another != 0) {
       *error_message = "Error creating file.";
