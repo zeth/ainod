@@ -14,7 +14,6 @@ START_TEST(test_get_key_value)
   ck_assert_str_eq(value, "4");
   free(key);
   free(value);
-  printf("\nHello\n\n");
 }
 END_TEST
 
