@@ -32,19 +32,3 @@ Suite * helpers_suite(void)
     suite_add_tcase(test_suite, create_new_file_test_case());
     return test_suite;
 }
-
-/** Test Runner **/
-int main(void)
-{
-  int number_failed;
-  Suite *s;
-  SRunner *sr;
-
-  s = helpers_suite();
-  sr = srunner_create(s);
-
-  srunner_run_all(sr, CK_NORMAL);
-  number_failed = srunner_ntests_failed(sr);
-  srunner_free(sr);
-  return (number_failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
-}

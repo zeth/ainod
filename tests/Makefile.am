@@ -20,7 +20,7 @@ check_PROGRAMS= testrunner
 TESTS= $(check_PROGRAMS)
 
 # List all your test source code here
-testrunner_SOURCES= test_helpers.c
+testrunner_SOURCES= test_runner.c
 # Compile only test code with -g and the NovaProva flags
 testrunner_CFLAGS= -g $(CHECK_CFLAGS)
 # Link testrunner with the Code Under Test and the NovaProva library
