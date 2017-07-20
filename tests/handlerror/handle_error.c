@@ -18,20 +18,35 @@
 ***/
 
 #define _GNU_SOURCE
-
-#include <np.h>	    /* NovaProva library */
-#include <string.h>
-#include <stdlib.h>
 #include <stdio.h>
-#include "../src/handleerror.h"
 
-void mock_do_exit(int status) {}
 
-void mock_do_printf(char *formatted_message) {
-  NP_ASSERT_STR_EQUAL(formatted_message, "There are 33 Monkeys.");
-}
+/* src/handleerror.c */
+/* handle_error */
 
-static void test_handle_error(void)
+//* Mock do_exit function */
+void do_exit()
+{
+  // This function should do nothing
+  // (Instead of exiting)
+};
+
+//* Mock do_printf function */
+void do_printf(char *formatted_message)
+{
+  ck_assert_str_eq("There are 33 Monkeys.", formatted_message);
+};
+
+START_TEST(test_handle_error)
 {
   handle_error("There are %d Monkeys.", 33);
+}
+END_TEST
+
+TCase *make_handle_error_test_case(void)
+{
+  TCase *test_case;
+  test_case = tcase_create("HandleError");
+  tcase_add_test(test_case, test_handle_error);
+  return test_case;
 }

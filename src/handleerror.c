@@ -37,20 +37,13 @@ int sd_journal_send(const char *format, ...);
 #endif
 
 #include "handleerror.h"
+#include "sys.h"
 
 /* Implement the next line properly later */
 #define IS_A_DAEMON 0
 
 /** `message` is the error message, with optional format
     arguments. **/
-
-void do_exit() {
-  exit (EXIT_FAILURE);
-};
-
-void do_printf(char *formatted_message) {
-  printf("Error: %s\n", formatted_message);
-};
 
 int handle_error(char *message, ...) {
   // Start by formatting the message with any optional args

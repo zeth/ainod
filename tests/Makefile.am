@@ -4,7 +4,7 @@ AM_LDFLAGS=-lsystemd -lrt -luuid -ljson-c
 AM_CFLAGS=-pthread -I/usr/include/json-c
 
 lib_LIBRARIES= libainod.a
-libainod_a_SOURCES= ../src/handleerror.h ../src/handleerror.c		\
+libainod_a_SOURCES= ../sys.h ../src/handleerror.h ../src/handleerror.c	\
 ../src/daemon/worker.h ../src/daemon/worker.c ../src/daemon/asocket.h	\
 ../src/daemon/asocket.c ../src/daemon/configparser.h			\
 ../src/daemon/configparser.c ../src/daemon/mutex.h			\
@@ -23,5 +23,5 @@ TESTS= $(check_PROGRAMS)
 testrunner_SOURCES= test_runner.c
 # Compile only test code with -g and the NovaProva flags
 testrunner_CFLAGS= -g $(CHECK_CFLAGS)
-# Link testrunner with the Code Under Test and the NovaProva library
+# Link testrunner with the Code Under Test and the Check library
 testrunner_LDADD= libainod.a $(CHECK_LIBS)

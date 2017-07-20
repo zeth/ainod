@@ -1,5 +1,5 @@
 bin_PROGRAMS=ainod
-ainod_SOURCES=handleerror.h handleerror.c daemon/worker.h	\
+ainod_SOURCES=sys.h handleerror.h handleerror.c daemon/worker.h	\
 daemon/worker.c daemon/asocket.h daemon/asocket.c		\
 daemon/configparser.h daemon/configparser.c daemon/mutex.h	\
 daemon/mutex.c jsonschema.h jsonrpc.h jsonrpc.c jsonhelpers.h	\

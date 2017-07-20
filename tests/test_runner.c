@@ -4,6 +4,7 @@
 
 #include "test_helpers.c"
 #include "test_configparser.c"
+#include "test_handleerror.c"
 
 Suite *make_master_suite (void)
 {
@@ -25,6 +26,7 @@ int main(void)
   srunner = srunner_create(make_master_suite());
   srunner_add_suite(srunner, helpers_suite());
   srunner_add_suite(srunner, configparser_suite());
+  srunner_add_suite(srunner, handlerror_suite());
 
   srunner_run_all(srunner, CK_NORMAL);
   number_failed = srunner_ntests_failed(srunner);
