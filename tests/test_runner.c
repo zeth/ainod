@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include <check.h>
 
-#include "test_helpers.c"
-#include "test_configparser.c"
-#include "test_handleerror.c"
+#include "helpers/suite_helpers.c"
+#include "configparser/suite_configparser.c"
+#include "handlerror/suite_handleerror.c"
 
 Suite *make_master_suite (void)
 {
