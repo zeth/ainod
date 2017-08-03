@@ -26,7 +26,7 @@ START_TEST(test_get_path_from_filter)
   char *reference;
   char *path;
   const char **error_message;
-  char *datadir = "/var/lib/ainodb";
+  char *datadir = "/var/lib/ainod";
   filter_object = json_object_new_object();
   json_object* storestring = json_object_new_string("catalog");
   json_object_object_add(filter_object,
@@ -50,7 +50,7 @@ START_TEST(test_get_path_from_filter)
   ck_assert_int_eq(result, 0);
   json_object_put(filter_object);
   ck_assert_str_eq(path,
-                   "/var/lib/ainodb/catalog/product/704e418e-682d-4ade-99be-710f2208102e");
+                   "/var/lib/ainod/catalog/product/704e418e-682d-4ade-99be-710f2208102e");
   free(path);
   free(reference);
 }
