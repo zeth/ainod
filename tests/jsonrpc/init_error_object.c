@@ -26,6 +26,7 @@ START_TEST(test_init_error_object)
   const char *message = "Pretend Error";
   int error_code = 12345;
   int success = init_error_object(&error_object, error_code, message);
+  ck_assert_int_eq(success, 0);
   const char* result = json_object_to_json_string(error_object);
 
   ck_assert_str_eq(result,
