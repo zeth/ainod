@@ -24,10 +24,10 @@
 #include <string.h>
 #include <check.h>
 
-#include "../src/handleerror.c"
+#include "../../src/handleerror.c"
 
 /** Test Cases */
-#include "handlerror/handle_error.c"
+#include "handle_error.c"
 
 /** Test Suite **/
 Suite * handlerror_suite(void)

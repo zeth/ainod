@@ -3,19 +3,19 @@
 #include <stdio.h>
 #include <string.h>
 #include <check.h>
-#include "../src/helpers.c"
+#include "../../src/helpers.c"
 
 /** Test Fixtures */
-#include "fixtures.c"
+#include "../fixtures.c"
 
 /** Test Cases */
-#include "helpers/check_for_highest_revision.c"
-#include "helpers/check_for_no_current.c"
-#include "helpers/create_document_dir.c"
-#include "helpers/create_file.c"
-#include "helpers/create_new_file.c"
-#include "helpers/get_revision_from_filename.c"
-#include "helpers/make_parents.c"
+#include "check_for_highest_revision.c"
+#include "check_for_no_current.c"
+#include "create_document_dir.c"
+#include "create_file.c"
+#include "create_new_file.c"
+#include "get_revision_from_filename.c"
+#include "make_parents.c"
 
 
 /** Test Suite **/

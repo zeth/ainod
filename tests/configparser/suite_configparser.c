@@ -3,11 +3,11 @@
 #include <stdio.h>
 #include <string.h>
 #include <check.h>
-#include "../src/daemon/configparser.c"
+#include "../../src/daemon/configparser.c"
 
 /** Test Cases */
-#include "configparser/get_key_value.c"
-#include "configparser/string_is_in_array.c"
+#include "get_key_value.c"
+#include "string_is_in_array.c"
 
 /** Test Suite **/
 Suite * configparser_suite(void)
