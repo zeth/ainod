@@ -16,18 +16,10 @@
   You should have received a copy of the GNU Lesser General Public License
   along with ainod; If not, see <http://www.gnu.org/licenses/>.
 ***/
-
-#include <np.h>	    /* NovaProva library */
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
+#define _GNU_SOURCE
 #include <json-c/json.h>
 
-int init_error_object(json_object **error_object,
-                      int error_code,
-                      const char *message);
-
-static void test_init_error_object(void)
+START_TEST(test_init_error_object)
 {
   /* Need to test success (true) and error (success is false)  */
   json_object *error_object = json_object_new_object();
@@ -36,8 +28,16 @@ static void test_init_error_object(void)
   int success = init_error_object(&error_object, error_code, message);
   const char* result = json_object_to_json_string(error_object);
 
-  NP_ASSERT_STR_EQUAL(result,
-                      "{ \"code\": 12345, \"message\": \"Pretend Error\" }");
-
+  ck_assert_str_eq(result,
+                   "{ \"code\": 12345, \"message\": \"Pretend Error\" }");
   json_object_put(error_object);
+}
+END_TEST
+
+TCase *make_init_error_object_test_case(void)
+{
+  TCase *test_case;
+  test_case = tcase_create("InitErrorObject");
+  tcase_add_test(test_case, test_init_error_object);
+  return test_case;
 }
