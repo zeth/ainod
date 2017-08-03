@@ -5,6 +5,7 @@
 #include "helpers/suite_helpers.c"
 #include "configparser/suite_configparser.c"
 #include "handlerror/suite_handleerror.c"
+#include "filter/suite_filter.c"
 
 Suite *make_master_suite (void)
 {
@@ -27,6 +28,7 @@ int main(void)
   srunner_add_suite(srunner, helpers_suite());
   srunner_add_suite(srunner, configparser_suite());
   srunner_add_suite(srunner, handlerror_suite());
+  srunner_add_suite(srunner, filter_suite());
 
   srunner_run_all(srunner, CK_NORMAL);
   number_failed = srunner_ntests_failed(srunner);

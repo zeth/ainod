@@ -17,16 +17,23 @@
   along with ainod; If not, see <http://www.gnu.org/licenses/>.
 ***/
 
-#include <np.h>	    /* NovaProva library */
-#include <string.h>
-#include <stdlib.h>
+#define _GNU_SOURCE
+#include <stdio.h>
 
-#include "../src/filter.h" /* declares the Code Under Test */
-
-static void test_get_id(void)
+START_TEST(test_get_id)
 {
   char *newid = get_id();
   int newid_length = strlen(newid);
   free(newid);
-  NP_ASSERT_EQUAL(newid_length, 36);
+  ck_assert_int_eq(newid_length, 36);
+}
+END_TEST
+
+
+TCase *make_get_id_test_case(void)
+{
+  TCase *test_case;
+  test_case = tcase_create("GetId");
+  tcase_add_test(test_case, test_get_id);
+  return test_case;
 }
