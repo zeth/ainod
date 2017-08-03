@@ -16,32 +16,33 @@
   You should have received a copy of the GNU Lesser General Public License
   along with ainod; If not, see <http://www.gnu.org/licenses/>.
 ***/
+#define _GNU_SOURCE
 
-#include <np.h>	    /* NovaProva library */
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <json-c/json.h>
 
-const char *create_response(json_object *request_id,
-                            json_object *data,
-                            bool success);
-
-static void test_create_resource(void)
+START_TEST(test_create_resource_error)
 {
   /* Need to test success (true) and error (success is false)  */
 
-  json_object *data = json_object_new_object();
-
-  json_object *jstring = json_object_new_string("world");
-  json_object_object_add(data,"hello", jstring);
+  json_object *error = json_object_new_object();
+  json_object *message = json_object_new_string("Pretend Error");
+  json_object *code = json_object_new_int(12345);
+  json_object_object_add(error, "message", message);
+  json_object_object_add(error, "code", code);
   json_object *request_id = json_object_new_string("testresponse");
 
   const char *response = create_response(request_id,
-                                         data,
-                                         true);
-
-  NP_ASSERT_STR_EQUAL(response,
-    "{ \"jsonrpc\": \"2.0\", \"id\": \"testresponse\", \"result\": { \"hello\": \"world\" } }");
+                                         error,
+                                         false);
+  ck_assert_str_eq(response,
+    "{ \"jsonrpc\": \"2.0\", \"id\": \"testresponse\", \"error\": { \"message\": \"Pretend Error\", \"code\": 12345 } }");
   free((char*) response);
+}
+END_TEST
+
+TCase *make_create_resource_error_test_case(void)
+{
+  TCase *test_case;
+  test_case = tcase_create("CreateResource");
+  tcase_add_test(test_case, test_create_resource_error);
+  return test_case;
 }
