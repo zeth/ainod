@@ -18,15 +18,9 @@
 ***/
 #define _GNU_SOURCE
 
-#include <np.h>	    /* NovaProva library */
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
 #include <json-c/json.h>
-#include "../src/filter.h"
 
-
-static void test_get_path_from_filter(void)
+START_TEST(test_get_path_from_filter_pathformat_two)
 {
   json_object *filter_object;
   char *reference;
@@ -38,10 +32,10 @@ static void test_get_path_from_filter(void)
   json_object_object_add(filter_object,
                          "store",
                          storestring);
-  json_object* collectionstring = json_object_new_string("product");
+  json_object* schemastring = json_object_new_string("product");
   json_object_object_add(filter_object,
-                         "collection",
-                         collectionstring);
+                         "schema",
+                         schemastring);
   json_object* idstring = json_object_new_string("704e418e-682d-4ade-99be-710f2208102e");
   json_object_object_add(filter_object,
                          "id",
@@ -49,15 +43,25 @@ static void test_get_path_from_filter(void)
   int result = get_path_from_filter(&filter_object,
                                     &reference,
                                     &path,
-                                    1,
+                                    2,
                                     error_message,
                                     &datadir,
                                     0);
-  NP_ASSERT_EQUAL(result, 0);
+  ck_assert_int_eq(result, 0);
   json_object_put(filter_object);
-  NP_ASSERT_STR_EQUAL(path,
-                      "/var/lib/ainodb/catalog/product/704e418e-682d-4ade-99be-710f2208102e");
+  ck_assert_str_eq(path,
+                   "/var/lib/ainodb/catalog/704e418e-682d-4ade-99be-710f2208102e/product");
   free(reference);
   free(path);
 
+}
+END_TEST
+
+
+TCase *make_get_path_from_filter_pathformat_two_test_case(void)
+{
+  TCase *test_case;
+  test_case = tcase_create("GetPathFromFilterPathformatTwo");
+  tcase_add_test(test_case, test_get_path_from_filter_pathformat_two);
+  return test_case;
 }
