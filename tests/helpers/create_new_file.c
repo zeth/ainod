@@ -25,6 +25,7 @@ START_TEST(test_create_new_file)
   int result = create_new_file(fixture_directory_path,
                                document,
                                &error_message);
+  ck_assert_int_eq(result, 0);
   json_object_put(document);
 
   // Check the file has the correct contents

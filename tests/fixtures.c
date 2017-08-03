@@ -67,9 +67,7 @@ void delete_numbered_file(int number)
 {
   char *numbered_filename;
   asprintf(&numbered_filename, "%s/%d.json", fixture_directory_path, number);
-  errno = 0;
   int unlink_err = unlink(numbered_filename);
-  int errvo = errno;
   ck_assert_int_eq(unlink_err, 0);
   free(numbered_filename);
 }
@@ -80,7 +78,6 @@ void delete_current_symlink(void)
   asprintf(&current_filename, "%s/current.json", fixture_directory_path);
   errno = 0;
   int unlink_err = unlink(current_filename);
-  int errvo = errno;
   ck_assert_int_eq(unlink_err, 0);
   free(current_filename);
 }
@@ -103,6 +100,7 @@ void check_contents_numbered_file(int number, char *contents)
 {
   char *buffer = (char *) malloc(JSON_FILE_BUF_SIZE);
   int read_result = read_numbered_file(1, buffer);
+  ck_assert_int_eq(read_result, 0);
   ck_assert_str_eq(buffer, contents);
   free(buffer);
 }

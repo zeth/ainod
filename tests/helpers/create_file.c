@@ -23,6 +23,7 @@ START_TEST(test_create_file)
                            1,
                            jobj,
                            &error_message);
+  ck_assert_int_eq(result, 0);
   json_object_put(jobj);
 
   // Check the file has the correct contents
