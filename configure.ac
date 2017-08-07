@@ -55,4 +55,10 @@ AS_IF([test "x$enable_tests" = "xyes"], [
 ])
 AM_CONDITIONAL([TESTS_ENABLED], [test "x$enable_tests" = "xyes"])
 
+AC_CHECK_FILE([/dev/shm], [
+  AC_DEFINE(TEST_FIXTURE_STORAGE, "/dev/shm", [Location to store temporary test fixture directories])
+  ], [
+  AC_DEFINE(TEST_FIXTURE_STORAGE, "/tmp", [Location to store temporary test fixture directories])
+])
+
 AC_OUTPUT

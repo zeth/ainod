@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <uuid/uuid.h>
 
+#include "../config.h"
+
 char *fixture_directory_path;
 
 
@@ -19,7 +21,7 @@ void create_fixture_directory(void)
 {
   const char *id;
   id = get_unique_path_id();
-  asprintf(&fixture_directory_path, "/dev/shm/ainod_test_fixture_%s", id);
+  asprintf(&fixture_directory_path, "%s/ainod_test_fixture_%s", TEST_FIXTURE_STORAGE, id);
   int creation_error = mkdir(fixture_directory_path, S_IRWXU|S_IRWXG|S_IROTH);
   ck_assert_int_eq(creation_error, 0);
   free((char*) id);
@@ -76,7 +78,6 @@ void delete_current_symlink(void)
 {
   char *current_filename;
   asprintf(&current_filename, "%s/current.json", fixture_directory_path);
-  errno = 0;
   int unlink_err = unlink(current_filename);
   ck_assert_int_eq(unlink_err, 0);
   free(current_filename);
@@ -103,4 +104,61 @@ void check_contents_numbered_file(int number, char *contents)
   ck_assert_int_eq(read_result, 0);
   ck_assert_str_eq(buffer, contents);
   free(buffer);
+}
+
+void test_create_test_file(void)
+{
+  create_fixture_directory();
+  // Make a store directory
+  char *store_directory;
+  asprintf(&store_directory, "%s/%s", fixture_directory_path, "timemachine");
+  int creation_error = mkdir(store_directory, S_IRWXU|S_IRWXG|S_IROTH);
+  ck_assert_int_eq(creation_error, 0);
+  // Make schema directory
+  char *schema_directory;
+  asprintf(&schema_directory, "%s/%s", store_directory, "eloi");
+  creation_error = mkdir(schema_directory, S_IRWXU|S_IRWXG|S_IROTH);
+  ck_assert_int_eq(creation_error, 0);
+  // Make object directory
+  char *object_directory;
+  asprintf(&object_directory, "%s/%s", schema_directory, "weena");
+  creation_error = mkdir(object_directory, S_IRWXU|S_IRWXG|S_IROTH);
+  ck_assert_int_eq(creation_error, 0);
+  // Add a file
+  char *numbered_filename;
+  asprintf(&numbered_filename, "%s/1.json", object_directory);
+  int fd = open(numbered_filename, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+  int result = write(fd, "{ \"Hello\": \"World\" }", 40);
+  // Make a symlink
+  char *linkpath;
+  asprintf(&linkpath, "%s/current.json", object_directory);
+  int symresult = symlink(numbered_filename, linkpath);
+  // Tidy Up
+  free(linkpath);
+  free(numbered_filename);
+  free(object_directory);
+  free(schema_directory);
+  free(store_directory);
+}
+
+void test_delete_test_file(void)
+{
+  char *store_directory;
+  char *schema_directory;
+  char *object_directory;
+  char *numbered_filename;
+  char *linkpath;
+  asprintf(&store_directory, "%s/%s", fixture_directory_path, "timemachine");
+  asprintf(&schema_directory, "%s/%s", store_directory, "eloi");
+  asprintf(&object_directory, "%s/%s", schema_directory, "weena");
+  asprintf(&numbered_filename, "%s/1.json", object_directory);
+  asprintf(&linkpath, "%s/current.json", object_directory);
+  int unlink_err = unlink(linkpath);
+  ck_assert_int_eq(unlink_err, 0);
+  unlink_err = unlink(numbered_filename);
+  ck_assert_int_eq(unlink_err, 0);
+  rmdir(object_directory);
+  rmdir(schema_directory);
+  rmdir(store_directory);
+  delete_fixture_directory();
 }

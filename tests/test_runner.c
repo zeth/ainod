@@ -7,7 +7,9 @@
 #include "handlerror/suite_handleerror.c"
 #include "filter/suite_filter.c"
 #include "jsonrpc/suite_jsonrpc.c"
+#include "methods/suite_methods.c"
 
+/** Default suite **/
 Suite *make_master_suite (void)
 {
   Suite *suite;
@@ -15,8 +17,6 @@ Suite *make_master_suite (void)
   suite = suite_create("Master");
   return suite;
 }
-
-
 
 
 /** Test Runner **/
@@ -31,6 +31,7 @@ int main(void)
   srunner_add_suite(srunner, handlerror_suite());
   srunner_add_suite(srunner, filter_suite());
   srunner_add_suite(srunner, jsonrpc_suite());
+  srunner_add_suite(srunner, methods_suite());
 
   srunner_run_all(srunner, CK_NORMAL);
   number_failed = srunner_ntests_failed(srunner);
