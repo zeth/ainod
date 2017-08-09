@@ -128,11 +128,13 @@ void test_create_test_file(void)
   char *numbered_filename;
   asprintf(&numbered_filename, "%s/1.json", object_directory);
   int fd = open(numbered_filename, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
-  int result = write(fd, "{ \"Hello\": \"World\" }", 40);
+  int bytes_written = write(fd, "{ \"Hello\": \"World\" }", 40);
+  ck_assert_int_eq(bytes_written, 40);
   // Make a symlink
   char *linkpath;
   asprintf(&linkpath, "%s/current.json", object_directory);
-  int symresult = symlink(numbered_filename, linkpath);
+  int symerror = symlink(numbered_filename, linkpath);
+  ck_assert_int_eq(symerror, 0);
   // Tidy Up
   free(linkpath);
   free(numbered_filename);
@@ -160,5 +162,8 @@ void test_delete_test_file(void)
   rmdir(object_directory);
   rmdir(schema_directory);
   rmdir(store_directory);
+  free(object_directory);
+  free(schema_directory);
+  free(store_directory);
   delete_fixture_directory();
 }
