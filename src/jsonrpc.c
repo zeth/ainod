@@ -67,7 +67,8 @@ int get_method_name(json_object *root_object,
   answer = json_object_object_get_ex(root_object, "method", &method_object);
   if (answer != true) {
     // Send back an error to the client
-    printf("1. Send an error to client please.\n");
+    printf("Request with missing method.\n");
+    *method_name = "";
     return JSON_SCHEMA_ERROR_INVALID_REQUEST;
   }
   *method_name = json_object_get_string(method_object);
