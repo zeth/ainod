@@ -60,20 +60,19 @@ int init_error_object(json_object **error_object,
   return 0;
 };
 
-const char *get_method_name(json_object *root_object) {
+int get_method_name(json_object *root_object,
+                    const char **method_name) {
   json_object *method_object;
   json_bool answer;
-  const char *method_name;
   answer = json_object_object_get_ex(root_object, "method", &method_object);
-  if (answer == true) {
-    method_name = json_object_get_string(method_object);
-  } else {
+  if (answer != true) {
     // Send back an error to the client
     printf("1. Send an error to client please.\n");
+    return JSON_SCHEMA_ERROR_INVALID_REQUEST;
   }
-  return method_name;
+  *method_name = json_object_get_string(method_object);
+  return 0;
 }
-
 
 int get_request_id(json_object **identifier,
                    json_object *root_object,
@@ -82,8 +81,6 @@ int get_request_id(json_object **identifier,
                    bool req_req_id) {
   //json_object *identifier;
   json_bool answer;
-  // here
-  const char *id_string;
   answer = json_object_object_get_ex(root_object, "id", identifier);
   if (answer == true) {
     /* We an have id, (but don't know the type yet) */
@@ -240,26 +237,15 @@ const char *process_buffer(char *buf,
   json_object *root_object;
   const char *response_text;
   root_object = json_tokener_parse(buf);
-  const char *method_name = get_method_name(root_object);
+
   json_object *identifier;
-  int success = get_request_id(&identifier,
+  int id_result = get_request_id(&identifier,
                                root_object,
                                silentnote,
                                req_id_format,
                                req_req_id);
-  if (success == 0) {
-    response_text = handle(method_name, identifier,
-                           root_object, path_format,
-                           datadir, false);
-    /* Do param errors have to propegate all the way to here? I don't
-       think so... */
 
-  } else if (success == AINOD_RPC_SILENT_NOTIFICATION) {
-    response_text = "";
-    handle(method_name, identifier,
-           root_object, path_format,
-           datadir, true);
-  } else if (success == JSON_SCHEMA_ERROR_INVALID_REQUEST) {
+  if (id_result == JSON_SCHEMA_ERROR_INVALID_REQUEST) {
     json_object * error_object = json_object_new_object();
     init_error_object(&error_object,
                       JSON_SCHEMA_ERROR_INVALID_REQUEST,
@@ -269,6 +255,38 @@ const char *process_buffer(char *buf,
                                     false);
     //json_object_put(error_object);
   }
+
+  // Get the method name //
+  const char *method_name;
+  int method_result = get_method_name(root_object, &method_name);
+  // Deal with error
+  if (method_result != 0) {
+    json_object * error_object = json_object_new_object();
+    init_error_object(&error_object,
+                      JSON_SCHEMA_ERROR_INVALID_REQUEST,
+                      AINOD_METHOD_MISSING);
+    response_text = create_response(identifier,
+                                    error_object,
+                                    false);
+    json_object_put(root_object);
+    return response_text;
+  }
+
+  // Silent notification
+  if (id_result == AINOD_RPC_SILENT_NOTIFICATION) {
+    response_text = "";
+    handle(method_name, identifier,
+           root_object, path_format,
+           datadir, true);
+  }
+
+  // Everything passed
+  if (id_result == 0) {
+    response_text = handle(method_name, identifier,
+                           root_object, path_format,
+                           datadir, false);
+  }
+
   // tidy up before return
   json_object_put(root_object);
   return response_text;

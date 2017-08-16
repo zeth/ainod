@@ -30,6 +30,9 @@ const char *process_buffer(char *buf,
 #define AINOD_INVALID_REQ_ID "The 'request id' was not of required type "\
   "(as specified in the Req-id-format setting)."
 
+#define AINOD_METHOD_MISSING "The JSON sent is not a valid Request object, "\
+  "it is missing the required 'method' member."
+
 #define AINOD_RPC_SILENT_NOTIFICATION 666
 
 #endif /* AINOD_JSONRPC_H */

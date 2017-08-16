@@ -41,19 +41,18 @@ int get(json_object *params,
   char *path;
   char *reference;
   json_object *filter_object;
-  int fsuccess;
 
   /* get filter */
   json_bool filter_exists = json_object_object_get_ex(params, "filter", &filter_object);
   if (filter_exists == true) {
-    fsuccess = get_path_from_filter(&filter_object, &reference, &path, path_format, error_message, &datadir, 0);
+    int fsuccess = get_path_from_filter(&filter_object, &reference, &path, path_format, error_message, &datadir, 0);
+    if (fsuccess != 0) {
+      return fsuccess;
+    }
   } else {
     printf("No filter found\n");
   }
 
-  if (fsuccess != 0) {
-    return fsuccess;
-  }
 
   char *current;
   const char *tail = "/current.json";
@@ -64,7 +63,9 @@ int get(json_object *params,
   int gsuccess = get_object_from_filename(current,
                                           data,
                                           error_message);
-  free(reference);
+  if (filter_exists == true) {
+    free(reference);
+  }
   free(path);
   free(current);
 
@@ -85,17 +86,15 @@ int create(json_object *params,
   char *reference;
   char *path;
   json_object *filter_object;
-  int fsuccess;
 
   json_bool filter_exists = json_object_object_get_ex(params, "filter", &filter_object);
   if (filter_exists == true) {
-    fsuccess = get_path_from_filter(&filter_object, &reference, &path, path_format, error_message, &datadir, 1);
+    int fsuccess = get_path_from_filter(&filter_object, &reference, &path, path_format, error_message, &datadir, 1);
+    if (fsuccess != 0) {
+      return fsuccess;
+    }
   } else {
     printf("No filter found\n");
-  }
-
-  if (fsuccess != 0) {
-    return fsuccess;
   }
 
   json_object *document_object;
