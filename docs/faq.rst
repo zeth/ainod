@@ -29,8 +29,6 @@ What operating systems does ainod support
 ainod should work on most modern Linux kernel-based distributions like
 Debian Fedora or Raspbian.
 
-The unit tests only run on Intel platforms currently.
-
 What about Linux systems without systemd?
 -----------------------------------------
 
@@ -97,22 +95,11 @@ How do I run the unit tests?
 ----------------------------
 
 Unit test support is not built in by default. To run the unit tests,
-you need both Valgrind and the NovaProva unit test
-framework. Instructions for getting the latter are here:
-http://novaprova.readthedocs.org/en/latest/getting-started.html
+you need the libcheck library.
 
-Sadly NovaProva does not yet support ARM or any other non-Intel
-architecture so you cannot run the tests on Raspbian. Hopefully, that
-gets fixed someday at least for Raspbian. Ainod does however work on
-Raspbian, just the test runner doesn't work.
+    sudo apt-get install check
 
-To install Valgrind, you can use the package manager again, for
-example::
-
-    sudo apt-get install valgrind
-
-Once you have both NovaProva and Valgrind installed, you need to
-compile ainod with tests enabled::
+Now with check installed, you can compile ainod with tests enabled::
 
     ./autogen.sh --enable-tests
     make
@@ -125,10 +112,10 @@ The make check command runs the tests::
 Why does ainod not support other operating systems
 --------------------------------------------------
 
-Currently ainod makes no attempt at supporting other operating
-systems. Firstly, it is easier to get the overall design first
-without adding until later all the 'if Linux do this, if Windows do
-that' checks.
+Right now, for ease of development, ainod makes no attempt at
+supporting other operating systems. Firstly, it is easier to get the
+overall design first without adding until later all the 'if Linux do
+this, if Windows do that' checks.
 
 However, there is nothing really stopping us adding other operating
 systems except time and available test hardware. Support for other
