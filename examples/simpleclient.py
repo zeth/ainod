@@ -5,6 +5,17 @@ import socket
 import sys
 import json
 
+try:
+    ConnectionRefusedError
+except NameError:
+    ConnectionRefusedError = socket.error
+
+try:
+    BrokenPipeError
+except NameError:
+    BrokenPipeError = socket.error
+
+
 ABSTRACT_SOCKET_NAME = "ainod"
 
 
@@ -23,9 +34,15 @@ def send_data_to_socket(data,
         # Receive data from the server and shut down
         received = str(sock.recv(4096), "utf-8")
 
+    except ConnectionRefusedError:
+        print("The connection was refused. "
+              "Are you sure the ainod daemon has been started?")
+        sys.exit()
+
     except BrokenPipeError:
         print("Arrgh")
         sys.exit()
+
     finally:
         sock.close()
 
