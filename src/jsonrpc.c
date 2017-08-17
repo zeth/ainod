@@ -69,7 +69,7 @@ int get_method_name(json_object *root_object,
     // Send back an error to the client
     printf("Request with missing method.\n");
     *method_name = "";
-    return JSON_SCHEMA_ERROR_INVALID_REQUEST;
+    return JSON_RPC_ERROR_INVALID_REQUEST;
   }
   *method_name = json_object_get_string(method_object);
   return 0;
@@ -102,7 +102,7 @@ int get_request_id(json_object **identifier,
       }
       /* if we got here then we wanted an int but got a string, throw
          an error back to the client! */
-      return JSON_SCHEMA_ERROR_INVALID_REQUEST;
+      return JSON_RPC_ERROR_INVALID_REQUEST;
     }
     if (id_type == json_type_int) {
       if (strcmp(req_id_format, "int") == 0) {
@@ -114,7 +114,7 @@ int get_request_id(json_object **identifier,
       }
       /* if we got here then we wanted a string but got an int, throw
          error to client. */
-      return JSON_SCHEMA_ERROR_INVALID_REQUEST;
+      return JSON_RPC_ERROR_INVALID_REQUEST;
     }
     if (id_type == json_type_double) {
       if (strcmp(req_id_format, "rpc") == 0) {
@@ -122,7 +122,7 @@ int get_request_id(json_object **identifier,
       }
       /* if we got here then we wanted a string or an int but got a
          number, throw error to client. */
-      return JSON_SCHEMA_ERROR_INVALID_REQUEST;
+      return JSON_RPC_ERROR_INVALID_REQUEST;
     }
     if (id_type == json_type_null) {
       if (strcmp(req_id_format, "rpc") == 0) {
@@ -135,11 +135,11 @@ int get_request_id(json_object **identifier,
       }
       /* if we got here then we wanted a string or an int but got a
          null, throw error to client. */
-      return JSON_SCHEMA_ERROR_INVALID_REQUEST;
+      return JSON_RPC_ERROR_INVALID_REQUEST;
     }
     /* if we got here then the request id needs to be a particular
        type or set of types but is an array or an int so throw an error*/
-    return JSON_SCHEMA_ERROR_INVALID_REQUEST;
+    return JSON_RPC_ERROR_INVALID_REQUEST;
   } else {
     /* No id found */
     if (silentnote) {
@@ -148,7 +148,7 @@ int get_request_id(json_object **identifier,
     } else {
       if (req_req_id) {
         /* Id is required but not present */
-        return JSON_SCHEMA_ERROR_INVALID_REQUEST;
+        return JSON_RPC_ERROR_INVALID_REQUEST;
       }
       /* No request id at all but it is not required in this case. So
          lets set it to 0.*/
@@ -246,10 +246,10 @@ const char *process_buffer(char *buf,
                                req_id_format,
                                req_req_id);
 
-  if (id_result == JSON_SCHEMA_ERROR_INVALID_REQUEST) {
+  if (id_result == JSON_RPC_ERROR_INVALID_REQUEST) {
     json_object * error_object = json_object_new_object();
     init_error_object(&error_object,
-                      JSON_SCHEMA_ERROR_INVALID_REQUEST,
+                      JSON_RPC_ERROR_INVALID_REQUEST,
                       AINOD_INVALID_REQ_ID);
     response_text = create_response(identifier,
                                     error_object,
@@ -264,7 +264,7 @@ const char *process_buffer(char *buf,
   if (method_result != 0) {
     json_object * error_object = json_object_new_object();
     init_error_object(&error_object,
-                      JSON_SCHEMA_ERROR_INVALID_REQUEST,
+                      JSON_RPC_ERROR_INVALID_REQUEST,
                       AINOD_METHOD_MISSING);
     response_text = create_response(identifier,
                                     error_object,

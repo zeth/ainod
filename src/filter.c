@@ -76,7 +76,7 @@ int get_path_from_filter(json_object **filter,
       printf("Found the %s store.\n", store);
     } else {
       *error_message = AINOD_MISSING_STORE;
-      return JSON_SCHEMA_ERROR_INVALID_PARAMS;
+      return JSON_RPC_ERROR_INVALID_PARAMS;
     }
 
     /* Get collection if needed */
@@ -86,7 +86,7 @@ int get_path_from_filter(json_object **filter,
         printf("Found the %s collection.\n", collection);
       } else {
         *error_message = AINOD_MISSING_COLLECTION;
-        return JSON_SCHEMA_ERROR_INVALID_PARAMS;
+        return JSON_RPC_ERROR_INVALID_PARAMS;
       }
     }
 
@@ -148,7 +148,7 @@ int get_path_from_filter(json_object **filter,
   int check = strncmp(absolute_path, *datadir, strlen(*datadir));
   if (check != 0) {
     *error_message = "Path traversal error.";
-    return JSON_SCHEMA_ERROR_INVALID_PARAMS;
+    return JSON_RPC_ERROR_INVALID_PARAMS;
   }
   /* TODO: Hand on the absolute path rather than raw */
   /* rewrite above slightly */
