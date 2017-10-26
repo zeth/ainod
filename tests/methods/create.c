@@ -31,6 +31,35 @@ int create(json_object *params,
 
 */
 
+START_TEST(test_create_missing_document)
+{
+  json_object *params;
+  json_object *filter;
+  const char *error_message;
+  json_object *data;
+  params = json_object_new_object();
+  filter = json_object_new_object();
+  json_object *store = json_object_new_string("timemachine");
+  json_object_object_add(filter, "store", store);
+  json_object *schema = json_object_new_string("morlocks");
+  json_object_object_add(filter, "schema", schema);
+  json_object *identifier = json_object_new_string("nebogipfel");
+  json_object_object_add(filter, "id", identifier);
+  json_object_object_add(params,
+                         "filter",
+                         filter);
+  int result = create(params, &data, &error_message, 0, fixture_directory_path);
+  ck_assert_int_eq(result, -20000);
+  const char* datastring = json_object_to_json_string(data);
+  ck_assert_str_eq("The create method requires a 'document' object inside 'params'.", error_message);
+  json_object_put(data);
+  json_object_put(params);
+  json_object_put(filter);
+}
+END_TEST
+
+
+/** It is already created by the fixture so we test its existence **/
 START_TEST(test_create)
 {
   json_object *params;
@@ -66,5 +95,6 @@ TCase *make_create_test_case(void)
                             test_create_test_file,
                             test_delete_test_file);
   tcase_add_test(test_case, test_create);
+  tcase_add_test(test_case, test_create_missing_document);
   return test_case;
 }
