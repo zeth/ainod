@@ -27,12 +27,17 @@ const char *process_buffer(char *buf,
                            char *datadir,
                            int path_format);
 
+#define AINOD_RPC_SILENT_NOTIFICATION 666
+
 #define AINOD_INVALID_REQ_ID "The 'request id' was not of required type "\
   "(as specified in the Req-id-format setting)."
 
 #define AINOD_METHOD_MISSING "The JSON sent is not a valid Request object, "\
   "it is missing the required 'method' member."
 
-#define AINOD_RPC_SILENT_NOTIFICATION 666
+#define AINOD_CREATE_MISSING_DOCUMENT "The create method requires a "\
+  "'document' object inside 'params'."
+
+
 
 #endif /* AINOD_JSONRPC_H */

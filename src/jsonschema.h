@@ -20,6 +20,8 @@
 #ifndef AINOD_JSON_SCHEMA_H
 #define AINOD_JSON_SCHEMA_H
 
+/** JSON RPC ERRORS **/
+
 /** Invalid JSON was received by the server. **/
 #define JSON_RPC_ERROR_PARSE_ERROR -32700
 
@@ -37,5 +39,11 @@
 
 /** Reserved for implementation-defined server-errors. */
 #define JSON_RPC_ERROR_SERVER_ERROR -32000
+
+
+/** METHOD ERRORS **/
+
+/** Create method has an error */
+#define AINOD_METHOD_CREATE_ERROR -20000
 
 #endif /* AINOD_JSON_SCHEMA_H */

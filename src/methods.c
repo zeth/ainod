@@ -30,6 +30,7 @@
 #include "jsonhelpers.h"
 #include "filter.h"
 #include "helpers.h"
+#include "jsonrpc.h"
 
 /** Note to support multiple results, we will need to stream back the documents */
 int get(json_object *params,
@@ -99,18 +100,24 @@ int create(json_object *params,
 
   json_object *document_object;
   json_bool document_exists = json_object_object_get_ex(params, "document", &document_object);
+
+
+  if (document_exists == false) {
+      *error_message = AINOD_CREATE_MISSING_DOCUMENT;
+      return AINOD_METHOD_CREATE_ERROR;
+  }
+
   /** TODO: go off for validaton here. **/
 
   int result = create_new_file(path, document_object, error_message);
-
+  free(path);
   if (result == 0) {
     *data = json_object_new_object();
     json_object *created = json_object_new_string(reference);
     json_object_object_add(*data, "created", created);
+    free(reference);
   }
 
-  free(reference);
-  free(path);
   return result;
 }
 
